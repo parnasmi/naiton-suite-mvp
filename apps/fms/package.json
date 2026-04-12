@@ -10,6 +10,9 @@
     "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/fms",
     "test": "node ../../scripts/placeholder-task.mjs test @naiton/fms"
   },
+  "dependencies": {
+    "@naiton/contracts": "workspace:*"
+  },
   "naiton": {
     "kind": "frontend-app",
     "port": 3003,

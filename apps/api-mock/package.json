@@ -4,11 +4,22 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/api-mock",
-    "build": "node ../../scripts/placeholder-task.mjs build @naiton/api-mock",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json --noEmit",
     "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/api-mock",
-    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/api-mock",
-    "test": "node ../../scripts/placeholder-task.mjs test @naiton/api-mock"
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --import tsx --test src/smoke.test.ts"
+  },
+  "dependencies": {
+    "@naiton/contracts": "workspace:*",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^4.17.23",
+    "@types/node": "^22.15.3",
+    "tsx": "^4.20.5"
   },
   "naiton": {
     "kind": "api",

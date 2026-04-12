@@ -26,11 +26,20 @@
       "@naiton/contracts": [
         "packages/contracts/src/index.ts"
       ],
+      "@naiton/contracts/*": [
+        "packages/contracts/src/*"
+      ],
       "@naiton/search-engine": [
         "packages/search-engine/src/index.ts"
       ],
+      "@naiton/search-engine/*": [
+        "packages/search-engine/src/*"
+      ],
       "@naiton/ui-kit": [
         "packages/ui-kit/src/index.ts"
+      ],
+      "@naiton/ui-kit/*": [
+        "packages/ui-kit/src/*"
       ]
     }
   }

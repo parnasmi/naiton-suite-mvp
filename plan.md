@@ -124,11 +124,51 @@ All endpoints below are relative to a runtime-resolved, versioned backend base U
 
 ## 3. Phase 3 - Mock API
 
-- [ ] Scaffold `apps/api-mock` with version-aware routers, CORS, seeded fixture modules, and a single runtime API base URL resolver consumed by all apps.
-- [ ] Implement the auth, navigation, dashboard, search, Sales, CRM, FMS, and Admin endpoints listed above.
-- [ ] Ensure auth/profile payload includes `frontend_version`, `latest_frontend_version`, `backend_version`, and `latest_backend_version` for runtime URL/base-URL resolution and fallback-to-latest behavior.
-- [ ] Add stable list-query parsing for grid screens and typed client wrappers in the frontend layer, with backend calls routed through runtime `backend_version` base URL resolution.
-- [ ] Add smoke tests that prove endpoint payloads conform to shared contracts.
+- [x] Scaffold `apps/api-mock` with version-aware routers, CORS, seeded fixture modules, and a single runtime API base URL resolver consumed by all apps.
+- [x] Implement the auth, navigation, dashboard, search, Sales, CRM, FMS, and Admin endpoints listed above.
+- [x] Ensure auth/profile payload includes `frontend_version`, `latest_frontend_version`, `backend_version`, and `latest_backend_version` for runtime URL/base-URL resolution and fallback-to-latest behavior.
+- [x] Add stable list-query parsing for grid screens and typed client wrappers in the frontend layer, with backend calls routed through runtime `backend_version` base URL resolution.
+- [x] Add smoke tests that prove endpoint payloads conform to shared contracts.
+
+### Files changed
+
+- `apps/api-mock/package.json` - replaced placeholder scripts with real API scripts (`dev`, `typecheck`, `test`) and added Express/CORS/contracts dependencies.
+- `apps/api-mock/tsconfig.json` - added API workspace TypeScript config for Node-targeted server/test code.
+- `apps/api-mock/src/config.ts` - added runtime API port/origin and deployed/latest frontend/backend version constants.
+- `apps/api-mock/src/app.ts` - added Express app bootstrap with JSON parsing, CORS, health route, and version-aware API mounts.
+- `apps/api-mock/src/server.ts` - added executable server entrypoint for local mock API runtime.
+- `apps/api-mock/src/types/express.d.ts` - added request typings for auth session/token and backend version resolution context.
+- `apps/api-mock/src/middleware/auth.ts` - added bearer-token authentication guard for protected endpoints.
+- `apps/api-mock/src/middleware/version-context.ts` - added backend-version resolution headers/context with fallback-to-latest behavior.
+- `apps/api-mock/src/services/session-store.ts` - added in-memory token issuance/revocation for mock auth sessions.
+- `apps/api-mock/src/services/endpoints.ts` - centralized endpoint payload builders used by routers and smoke tests.
+- `apps/api-mock/src/routes/router.ts` - implemented all planned Phase 3 routes across auth, navigation, notifications, search, dashboard, sales, CRM, FMS, and admin.
+- `apps/api-mock/src/lib/list-query.ts` - implemented stable list query parsing for sales/CRM/fleet filters and pagination/sort fields.
+- `apps/api-mock/src/lib/paginate.ts` - added shared pagination utility for list endpoints.
+- `apps/api-mock/src/lib/sort.ts` - added stable sortable-field parser and typed collection sorting helper.
+- `apps/api-mock/src/lib/search.ts` - added grouped command/search result builder across navigation and domain fixtures.
+- `apps/api-mock/src/fixtures/users.ts` - added seeded users and auth-profile payloads with frontend/backend version metadata.
+- `apps/api-mock/src/fixtures/navigation.ts` - added seeded module navigation payloads with enabled/coming-soon states.
+- `apps/api-mock/src/fixtures/notifications.ts` - added seeded notification feed payloads.
+- `apps/api-mock/src/fixtures/dashboard.ts` - added seeded shell dashboard summary payload.
+- `apps/api-mock/src/fixtures/sales.ts` - added seeded sales order dataset for list/detail endpoints.
+- `apps/api-mock/src/fixtures/crm.ts` - added seeded CRM companies dataset for list/detail endpoints.
+- `apps/api-mock/src/fixtures/fms.ts` - added seeded fleet vehicles and derived map marker dataset.
+- `apps/api-mock/src/fixtures/admin.ts` - added seeded admin overview metrics payload.
+- `apps/api-mock/src/smoke.test.ts` - added smoke tests validating endpoint payload builders and runtime fallback behavior against shared contracts.
+- `packages/contracts/src/index.ts` - extended shared contracts with backend version fields in auth sessions plus list response schemas used by API/client.
+- `packages/contracts/src/runtime-api.ts` - added single runtime backend base URL resolver with fallback logic and versioned origin output.
+- `packages/contracts/src/list-query.ts` - added shared list-query parser/builder utilities for API routes and frontend clients.
+- `packages/contracts/src/client.ts` - added typed runtime API client wrappers for all Phase 3 endpoints with contract-validated responses.
+- `packages/contracts/package.json` - exposed `client`, `runtime-api`, and `list-query` subpath exports for app/API consumption.
+- `apps/shell/src/shared/api/client.ts` - added shell-side typed API wrapper wired to runtime backend version resolution.
+- `apps/sales/src/shared/api/client.ts` - added sales-side typed API wrapper wired to runtime backend version resolution.
+- `apps/crm/src/shared/api/client.ts` - added CRM-side typed API wrapper wired to runtime backend version resolution.
+- `apps/fms/src/shared/api/client.ts` - added FMS-side typed API wrapper wired to runtime backend version resolution.
+- `apps/admin/src/shared/api/client.ts` - added admin-side typed API wrapper wired to runtime backend version resolution.
+- `apps/shell/package.json`, `apps/sales/package.json`, `apps/crm/package.json`, `apps/fms/package.json`, `apps/admin/package.json` - added `@naiton/contracts` workspace dependency to support typed frontend API wrappers.
+- `tsconfig.base.json` - added path aliases for package subpath imports (`@naiton/contracts/*`, etc.) used by new shared runtime/client modules.
+- `pnpm-lock.yaml` - updated lockfile for new Phase 3 API/runtime dependencies.
 
 ## 4. Phase 4 - Shell App
 

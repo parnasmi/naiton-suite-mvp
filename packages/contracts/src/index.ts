@@ -38,6 +38,10 @@ export const AuthSessionSchema = z.object({
   permissions: z.array(z.string()).default([]),
   frontend_version: SemverSchema,
   latest_frontend_version: SemverSchema,
+  backend_version: SemverSchema,
+  latest_backend_version: SemverSchema,
+  deployed_frontend_versions: z.array(SemverSchema).default([]),
+  deployed_backend_versions: z.array(SemverSchema).default([]),
   locale: z.string().min(2).default("en"),
   avatar_url: z.string().url().optional(),
   expires_at: IsoDateStringSchema.optional()
@@ -82,6 +86,8 @@ export const NavModuleSchema = z.object({
   order: z.number().int().min(0).default(0)
 });
 
+export const NavigationResponseSchema = z.array(NavModuleSchema);
+
 export const NotificationSchema = z.object({
   id: z.string().min(1),
   title: z.string().min(1),
@@ -90,6 +96,8 @@ export const NotificationSchema = z.object({
   read: z.boolean().default(false),
   severity: z.enum(["info", "success", "warning", "error"]).default("info")
 });
+
+export const NotificationListResponseSchema = z.array(NotificationSchema);
 
 export const DashboardKpiSchema = z.object({
   id: z.string().min(1),
@@ -171,6 +179,8 @@ export const FleetVehicleSchema = z.object({
   updated_at: IsoDateStringSchema
 });
 
+export const FleetVehicleListResponseSchema = createPagedResponseSchema(FleetVehicleSchema);
+
 export const MapMarkerSchema = z.object({
   id: z.string().min(1),
   vehicle_id: z.string().min(1),
@@ -179,6 +189,8 @@ export const MapMarkerSchema = z.object({
   status: VehicleStatusSchema,
   label: z.string().min(1)
 });
+
+export const MapMarkerListResponseSchema = z.array(MapMarkerSchema);
 
 export const AdminOverviewSchema = z.object({
   total_users: z.number().int().min(0),
@@ -270,7 +282,9 @@ export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 export type LogoutResponse = z.infer<typeof LogoutResponseSchema>;
 export type NavModuleKey = z.infer<typeof NavModuleKeySchema>;
 export type NavModule = z.infer<typeof NavModuleSchema>;
+export type NavigationResponse = z.infer<typeof NavigationResponseSchema>;
 export type Notification = z.infer<typeof NotificationSchema>;
+export type NotificationListResponse = z.infer<typeof NotificationListResponseSchema>;
 export type DashboardSummary = z.infer<typeof DashboardSummarySchema>;
 export type SalesOrder = z.infer<typeof SalesOrderSchema>;
 export type SalesOrderListResponse = z.infer<typeof SalesOrderListResponseSchema>;
@@ -278,7 +292,9 @@ export type CrmCompany = z.infer<typeof CrmCompanySchema>;
 export type CrmCompanyListResponse = z.infer<typeof CrmCompanyListResponseSchema>;
 export type VehicleStatus = z.infer<typeof VehicleStatusSchema>;
 export type FleetVehicle = z.infer<typeof FleetVehicleSchema>;
+export type FleetVehicleListResponse = z.infer<typeof FleetVehicleListResponseSchema>;
 export type MapMarker = z.infer<typeof MapMarkerSchema>;
+export type MapMarkerListResponse = z.infer<typeof MapMarkerListResponseSchema>;
 export type AdminOverview = z.infer<typeof AdminOverviewSchema>;
 export type SearchResultType = z.infer<typeof SearchResultTypeSchema>;
 export type SearchResult = z.infer<typeof SearchResultSchema>;
