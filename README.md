@@ -2,23 +2,29 @@
 
 Clean-slate Turborepo scaffold for the Naiton MVP.
 
-The project target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, and Admin screens with close visual fidelity, using shared contracts and a mock API-first workflow.
+The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, and Admin screens with close visual fidelity, using shared contracts and a mock API-first workflow.
 
 ## Current Status
 
-Phase 1 is completed:
+Phase 1 and Phase 2 are completed:
 - Monorepo foundation and package topology are in place.
-- App/package workspaces are scaffolded.
-- Shared root scripts and environment conventions are locked.
-- App and package scripts are currently placeholders (implementation begins in Phase 2+).
+- Shared platform packages are now implemented:
+  - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
+  - `@naiton/search-engine` (command palette provider, registry hooks, shell)
+  - `@naiton/ui-kit` (Tailwind v4 tokens, shared chrome/primitives, provider stack)
+- Frontend apps and API app remain placeholder scripts until later phases.
 
 ## Tech Stack
 
 - `pnpm` + `Turborepo`
 - `TypeScript`
-- Planned frontend stack: `React` + `Vite` + `React Router v7`
-- Planned styling/state/data stack: `Tailwind CSS v4`, `@tanstack/react-query`, `zustand`
-- Planned backend/contracts stack: `Express` mock API + `zod`
+- Shared platform libraries in use:
+  - `zod`
+  - `react`
+  - `@tanstack/react-query`
+  - `zustand`
+  - `@tanstack/react-table`
+  - `tailwindcss` v4
 
 ## Workspace Layout
 
@@ -73,7 +79,55 @@ pnpm typecheck
 pnpm test
 ```
 
-Note: these commands run through Turborepo and currently execute placeholder task scripts in each workspace.
+These commands run through Turborepo. Shared packages now run real TypeScript checks; app workspaces are still placeholder runners until app phases begin.
+
+## Phase 2 Shared Packages
+
+### `@naiton/contracts`
+
+Exports `zod` schemas and inferred types for:
+- Auth/session (`frontend_version`, `latest_frontend_version` included)
+- Navigation and notifications
+- Dashboard summary
+- Sales orders
+- CRM companies
+- FMS vehicles/map markers
+- Admin overview
+- Search groups/results
+- Common list-query and pagination contracts
+
+### `@naiton/search-engine`
+
+Exports:
+- `SearchProvider`
+- `useCommandPalette`
+- `useRegisterSearchSource`
+- `CommandPaletteShell`
+- Registry and result-group types for app-level source registration
+
+Keyboard shortcut is wired to `Ctrl/Cmd+K`.
+
+### `@naiton/ui-kit`
+
+Exports:
+- Tailwind v4 token stylesheet at `@naiton/ui-kit/tokens.css`
+- Shared UI primitives: `AuthPanel`, `TopShellBar`, `SideRail`, `ShellLayout`, `SurfaceCard`
+- Data and metric components: `DataGrid`, `MetricCard`, `MetricRingCard`, `MapPanel`
+- Inputs and state visuals: `SearchInput`, `CommandPalette`, `StatusBadge`, `StatusDot`
+- Shared provider setup: `PlatformProviders`, `ThemeProvider`, `SessionProvider`
+
+## Provider Setup Example
+
+```tsx
+import { PlatformProviders } from "@naiton/ui-kit";
+import "@naiton/ui-kit/tokens.css";
+
+export function AppRoot() {
+  return <PlatformProviders>{/* app routes */}</PlatformProviders>;
+}
+```
+
+`PlatformProviders` composes theme state, TanStack Query client, session state, and command palette state.
 
 ## Environment Variables
 
@@ -105,25 +159,14 @@ Defined in `.env.example`:
 
 List endpoints are planned to support stable params: `page`, `pageSize`, `search`, `sort`, and screen-specific filters.
 
-## Architecture Notes
-
-- `apps/shell` owns login and post-login home dashboard.
-- Domain screens live as standalone apps: Sales, CRM, FMS, Admin.
-- Frontend route version is resolved at runtime from authenticated profile data (`frontend_version`).
-- Frontend apps follow FSD layers: `app`, `pages`, `widgets`, `features`, `entities`, `shared`.
-- `packages/ui-kit` will own shared design tokens/primitives.
-- `packages/contracts` will own shared `zod` schemas and TypeScript types.
-- `packages/search-engine` will own the global command palette (`Ctrl/Cmd+K`).
-
 ## Roadmap Snapshot
 
-1. Phase 2: shared platform packages (`ui-kit`, `contracts`, `search-engine`).
-2. Phase 3: mock API scaffold + typed endpoint coverage.
-3. Phase 4: shell app (auth + dashboard).
-4. Phase 5: Sales app orders screen.
-5. Phase 6: CRM companies screen.
-6. Phase 7: FMS fleet + map screen.
-7. Phase 8: Admin dashboard + polish + CI-ready checks.
+1. Phase 3: mock API scaffold + typed endpoint coverage.
+2. Phase 4: shell app (auth + dashboard).
+3. Phase 5: Sales app orders screen.
+4. Phase 6: CRM companies screen.
+5. Phase 7: FMS fleet + map screen.
+6. Phase 8: Admin dashboard + polish + CI-ready checks.
 
 ---
 

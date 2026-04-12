@@ -5,7 +5,7 @@
 - Goal: build a clean-slate Turborepo MVP that reproduces the supplied Naiton login, shell, Sales, CRM, FMS, and Admin screens with close visual fidelity and future-ready mock contracts.
 - Deliverables: `apps/shell`, `apps/sales`, `apps/crm`, `apps/fms`, `apps/admin`, `apps/api-mock`; `packages/ui-kit`, `packages/search-engine`, `packages/contracts`.
 - Development model: each numbered phase should be executable as a standalone fresh conversation and end in a runnable slice.
-- Routing/versioning model: frontend version is runtime-resolved from authenticated user profile data; routes must not hardcode `v1.0.0`.
+- Routing/versioning model: frontend route version and backend API version are runtime-resolved from authenticated user profile data; neither frontend routes nor backend API base URL may hardcode `v1.0.0`.
 
 ## Stack
 
@@ -22,6 +22,7 @@
 - Every frontend app uses FSD: `app`, `pages`, `widgets`, `features`, `entities`, `shared`.
 - Stable entry point is `app.naiton.com/login`; Shell authenticates, loads profile, then resolves runtime version routing.
 - Frontend version is dynamic from profile/auth payload (`frontend_version`) and must not be hardcoded in route basenames.
+- Backend API version is dynamic from profile/auth payload (`backend_version`) and must be applied in runtime API base URL resolution.
 - Production URL model is host-per-module + semver path:
   - `app.naiton.com/{semver}/shell`
   - `sales.naiton.com/{semver}/`
@@ -29,6 +30,8 @@
   - `fms.naiton.com/{semver}/`
   - `admin.naiton.com/{semver}/`
 - If requested `frontend_version` is not deployed, Shell falls back to latest deployed frontend version from API metadata.
+- Backend URL model is versioned base URL plus stable endpoint paths: `{api_origin}/{backend_semver}` + `/api/...`.
+- If requested `backend_version` is not deployed, API client resolution falls back to `latest_backend_version` from API metadata.
 - Dev ports are fixed to `3000` shell, `3001` sales, `3002` crm, `3003` fms, `3004` admin, `4000` api-mock.
 - `packages/ui-kit` owns brand tokens, Tailwind theme, shell chrome, table/card/form primitives, and shared empty/loading/error states.
 - `packages/search-engine` owns the global command palette and is opened with `Ctrl/Cmd+K` instead of `Ctrl+Q` to avoid OS/browser conflicts.
@@ -36,6 +39,8 @@
 - All frontend data access goes through typed clients built from `packages/contracts`; pages/widgets do not call `fetch` directly.
 
 ## API Endpoints
+
+All endpoints below are relative to a runtime-resolved, versioned backend base URL (`{api_origin}/{backend_semver}`), so calls resolve to `/{backend_semver}/api/...` in production-style routing.
 
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
@@ -56,7 +61,7 @@
 ## Public Interfaces
 
 - `packages/contracts` exports `AuthSession`, `NavModule`, `DashboardSummary`, `SalesOrder`, `CrmCompany`, `FleetVehicle`, `MapMarker`, `AdminOverview`, and `SearchResult`.
-- `AuthSession` (or equivalent auth/profile contract) includes `frontend_version` and `latest_frontend_version` to support runtime routing and fallback.
+- `AuthSession` (or equivalent auth/profile contract) includes `frontend_version`, `latest_frontend_version`, `backend_version`, and `latest_backend_version` to support runtime routing/base-URL resolution and fallback.
 - `packages/ui-kit` exports `AuthPanel`, `TopShellBar`, `SideRail`, `DataGrid`, `MetricCard`, `MetricRingCard`, `SearchInput`, `CommandPalette`, `MapPanel`, and shared status badges/icons.
 - `packages/search-engine` exports `SearchProvider`, `useCommandPalette`, and a registry interface for app-level search sources.
 
@@ -70,7 +75,7 @@
 ### Files changed
 
 - `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json` - added the root workspace manifest, package discovery, Turborepo task graph, and shared TypeScript defaults.
-- `workspace.config.json`, `.env.example` - locked the Phase 1 conventions for ports, env variables, and dynamic frontend version routing inputs (no hardcoded production basenames).
+- `workspace.config.json`, `.env.example` - locked the Phase 1 conventions for ports, env variables, dynamic frontend route version inputs, and dynamic backend API version inputs (no hardcoded production basenames).
 - `scripts/placeholder-task.mjs` - added a shared placeholder runner so every workspace already exposes stable `dev`, `build`, `lint`, `typecheck`, and `test` scripts.
 - `templates/fsd-app/README.md`, `templates/fsd-app/tsconfig.template.json` - added the reusable FSD template with the agreed folder layers and local path alias mappings.
 - `apps/shell/package.json`, `apps/sales/package.json`, `apps/crm/package.json`, `apps/fms/package.json`, `apps/admin/package.json` - created empty frontend workspace manifests with fixed dev ports and placeholder scripts; production route versioning is runtime-resolved.
@@ -81,17 +86,48 @@
 
 ## 2. Phase 2 - Shared Platform
 
-- [ ] Build `packages/ui-kit` with Tailwind v4 tokens, layout primitives, tables, cards, metric widgets, auth controls, and shared chrome matching the screenshots.
-- [ ] Build `packages/contracts` with `zod` schemas and TypeScript types shared by API and apps.
-- [ ] Build `packages/search-engine` with command palette shell, search result groups, and app registration hooks.
-- [ ] Add shared provider setup for theme, query client, session state, and command palette state.
+- [x] Build `packages/ui-kit` with Tailwind v4 tokens, layout primitives, tables, cards, metric widgets, auth controls, and shared chrome matching the screenshots.
+- [x] Build `packages/contracts` with `zod` schemas and TypeScript types shared by API and apps.
+- [x] Build `packages/search-engine` with command palette shell, search result groups, and app registration hooks.
+- [x] Add shared provider setup for theme, query client, session state, and command palette state.
+
+### Files changed
+
+- `packages/contracts/package.json` - replaced placeholder scripts with real TypeScript checks and added the `zod` runtime dependency.
+- `packages/contracts/tsconfig.json` - added package-level TypeScript configuration extending the monorepo base config.
+- `packages/contracts/src/index.ts` - implemented shared `zod` schemas and exported TypeScript contracts for auth, navigation, dashboard, sales, CRM, FMS, admin, and search payloads.
+- `packages/search-engine/package.json` - replaced placeholder scripts with real TypeScript checks and added React dependencies for provider/shell implementation.
+- `packages/search-engine/tsconfig.json` - added package-level TypeScript configuration for the search engine package.
+- `packages/search-engine/src/types.ts` - added command palette item, source registry, grouping, and provider API interfaces.
+- `packages/search-engine/src/provider.tsx` - implemented `SearchProvider` with source registry management, `Ctrl/Cmd+K` shortcut handling, grouped async search execution, and command palette state.
+- `packages/search-engine/src/hooks.ts` - added app-facing hooks for command palette access and source registration.
+- `packages/search-engine/src/components/command-palette-shell.tsx` - added a reusable command palette shell UI with grouped results and keyboard navigation.
+- `packages/search-engine/src/index.ts` - exported the package public API (`SearchProvider`, hooks, shell component, and registry types).
+- `packages/ui-kit/package.json` - replaced placeholder scripts with real TypeScript checks and added package dependencies (`react-query`, `zustand`, `react-table`, Tailwind v4, and workspace package links).
+- `packages/ui-kit/tsconfig.json` - added package-level TypeScript configuration for UI kit source files.
+- `packages/ui-kit/src/styles/tokens.css` - added Tailwind v4 theme tokens, brand palette, typography tokens, and shared control/card style classes.
+- `packages/ui-kit/src/lib/cn.ts` - added a shared class name merge helper used by UI primitives.
+- `packages/ui-kit/src/components/auth-panel.tsx` - implemented the shared login/auth form panel with loading and error states.
+- `packages/ui-kit/src/components/shell-chrome.tsx` - implemented top shell bar, side rail, and shell layout primitives for cross-app chrome.
+- `packages/ui-kit/src/components/data-grid.tsx` - implemented a generic table primitive on top of `@tanstack/react-table` with sorting and empty/loading states.
+- `packages/ui-kit/src/components/metric-cards.tsx` - implemented standard KPI cards and ring-progress metric cards.
+- `packages/ui-kit/src/components/search-input.tsx` - implemented shared search input with hotkey hint affordance.
+- `packages/ui-kit/src/components/status-badge.tsx` - implemented shared status badge and status dot primitives for table/card statuses.
+- `packages/ui-kit/src/components/map-panel.tsx` - implemented a map panel surface with marker plotting and selected marker emphasis.
+- `packages/ui-kit/src/components/command-palette.tsx` - implemented a shared command palette UI component with grouped results.
+- `packages/ui-kit/src/components/surface-card.tsx` - implemented a lightweight shared card/layout surface primitive.
+- `packages/ui-kit/src/providers/theme-provider.tsx` - implemented shared theme state management (`light`/`dark`/`system`) with DOM theme syncing.
+- `packages/ui-kit/src/providers/session-provider.tsx` - implemented shared `zustand` session store provider/hook setup backed by contracts.
+- `packages/ui-kit/src/providers/platform-providers.tsx` - implemented the combined provider stack for theme, query client, session state, and command palette state.
+- `packages/ui-kit/src/index.ts` - exported the new UI kit primitives, provider APIs, and command palette hooks.
+- `pnpm-lock.yaml` - updated lockfile for new Phase 2 dependencies across shared packages.
 
 ## 3. Phase 3 - Mock API
 
-- [ ] Scaffold `apps/api-mock` with version-aware routers, CORS, seeded fixture modules, and a single base URL consumed by all apps.
+- [ ] Scaffold `apps/api-mock` with version-aware routers, CORS, seeded fixture modules, and a single runtime API base URL resolver consumed by all apps.
 - [ ] Implement the auth, navigation, dashboard, search, Sales, CRM, FMS, and Admin endpoints listed above.
-- [ ] Ensure auth/profile payload includes `frontend_version` plus `latest_frontend_version` for runtime URL resolution and fallback-to-latest behavior.
-- [ ] Add stable list-query parsing for grid screens and typed client wrappers in the frontend layer.
+- [ ] Ensure auth/profile payload includes `frontend_version`, `latest_frontend_version`, `backend_version`, and `latest_backend_version` for runtime URL/base-URL resolution and fallback-to-latest behavior.
+- [ ] Add stable list-query parsing for grid screens and typed client wrappers in the frontend layer, with backend calls routed through runtime `backend_version` base URL resolution.
 - [ ] Add smoke tests that prove endpoint payloads conform to shared contracts.
 
 ## 4. Phase 4 - Shell App
@@ -99,8 +135,10 @@
 - [ ] Build the login screen with close-match layout, brand treatment, language selector, cookie settings stub, and terms/privacy links.
 - [ ] Implement login, logout, session restore, permission loading, and guarded navigation against the mock API.
 - [ ] After login/session restore, resolve `{semver}` from `frontend_version` and redirect to `app.naiton.com/{semver}/shell`.
+- [ ] After login/session restore, resolve backend API base URL semver from `backend_version` and initialize typed API clients with that runtime base URL.
 - [ ] Build host-aware nav routing from shell to module subdomains using the same resolved `{semver}` path segment.
 - [ ] If requested version is unavailable, fallback to `latest_frontend_version` before redirecting.
+- [ ] If requested backend API version is unavailable, fallback API base URL resolution to `latest_backend_version` before loading protected data.
 - [ ] Build the post-login home dashboard with the shared top nav, search bar, notifications/settings/profile controls, charts, and activity panel from the screenshots.
 - [ ] Make the shell the launch point for all other apps and keep disabled modules visibly present but non-navigable.
 
@@ -137,6 +175,8 @@
 - [ ] Valid login lands on `app.naiton.com/{frontend_version}/shell`; invalid login shows an inline error; logout returns to the login screen.
 - [ ] Shell-to-module navigation preserves the same resolved `{frontend_version}` across subdomains.
 - [ ] If `frontend_version` is not deployed, shell redirects to `/{latest_frontend_version}/...` target route.
+- [ ] Authenticated API calls resolve against `/{backend_version}/api/...` (versioned backend base URL + stable endpoint paths).
+- [ ] If `backend_version` is not deployed, API client falls back to `/{latest_backend_version}/api/...` without breaking app initialization.
 - [ ] Direct browser refresh works on every versioned app route across shell and module hosts without breaking client-side navigation.
 - [ ] Sales and CRM tables support search, sorting, page size changes, and stable mock filtering.
 - [ ] FMS vehicle selection updates both the list state and the highlighted map marker.
@@ -150,7 +190,7 @@
 - English is the only required locale for MVP; the language selector can remain mostly static.
 - Auth is mock-only for MVP and uses a seeded role/permission matrix returned by the API.
 - Shell host is `app.naiton.com`; module hosts are `sales|crm|fms|admin.naiton.com`.
-- Version source is a single `frontend_version` returned by auth/profile per user session.
-- If that version is unavailable, routing falls back to API-provided `latest_frontend_version`.
+- Version sources are `frontend_version` (frontend routing) and `backend_version` (API base URL) returned by auth/profile per user session.
+- If requested versions are unavailable, frontend routing falls back to `latest_frontend_version` and API base URL resolution falls back to `latest_backend_version`.
 - Deployment serves static bundles by semantic-version path folders so CDN can resolve `/{semver}/...` routes.
 - Unimplemented modules stay visible as placeholders rather than being hidden, because the screenshots establish that navigation surface.
