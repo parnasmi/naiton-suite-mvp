@@ -23,6 +23,6 @@ Use this template for every React frontend app in `apps/*`.
 
 ## Conventions locked in Phase 1
 
-- Frontend version prefix: `v1.0.0`
-- Versioned basenames come from `workspace.config.json`
+- Frontend version is runtime-resolved from auth/profile data (`frontend_version`)
+- Route templates and host conventions come from `workspace.config.json` (no hardcoded production basenames)
 - Shared package imports come from `@naiton/*`

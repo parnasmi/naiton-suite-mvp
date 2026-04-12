@@ -40,16 +40,16 @@ templates/
   fsd-app/
 ```
 
-## App Ports And Basenames
+## App Ports And Runtime Routes
 
-| App | Port | Basename |
-|---|---:|---|
-| shell | 3000 | `/v1.0.0/shell` |
-| sales | 3001 | `/v1.0.0/sales` |
-| crm | 3002 | `/v1.0.0/crm` |
-| fms | 3003 | `/v1.0.0/fms` |
-| admin | 3004 | `/v1.0.0/admin` |
-| api-mock | 4000 | `/api` |
+| App | Port | Host | Route Template |
+|---|---:|---|---|
+| shell | 3000 | `app.naiton.com` | `/{semver}/shell` |
+| sales | 3001 | `sales.naiton.com` | `/{semver}/` |
+| crm | 3002 | `crm.naiton.com` | `/{semver}/` |
+| fms | 3003 | `fms.naiton.com` | `/{semver}/` |
+| admin | 3004 | `admin.naiton.com` | `/{semver}/` |
+| api-mock | 4000 | `localhost` | `/api` |
 
 ## Prerequisites
 
@@ -79,11 +79,12 @@ Note: these commands run through Turborepo and currently execute placeholder tas
 
 Defined in `.env.example`:
 
-- `NAITON_FRONTEND_VERSION`
 - `NAITON_API_PORT`
 - `NAITON_API_BASE_URL`
+- `NAITON_VERSION_SOURCE_FIELD`, `NAITON_LATEST_VERSION_FIELD`, `NAITON_VERSION_FALLBACK`
+- `NAITON_SHELL_HOST`, `NAITON_SALES_HOST`, `NAITON_CRM_HOST`, `NAITON_FMS_HOST`, `NAITON_ADMIN_HOST`
 - `SHELL_PORT`, `SALES_PORT`, `CRM_PORT`, `FMS_PORT`, `ADMIN_PORT`
-- `SHELL_BASENAME`, `SALES_BASENAME`, `CRM_BASENAME`, `FMS_BASENAME`, `ADMIN_BASENAME`
+- `SHELL_ROUTE_TEMPLATE`, `SALES_ROUTE_TEMPLATE`, `CRM_ROUTE_TEMPLATE`, `FMS_ROUTE_TEMPLATE`, `ADMIN_ROUTE_TEMPLATE`
 
 ## Planned API Surface (Mock)
 
@@ -108,6 +109,7 @@ List endpoints are planned to support stable params: `page`, `pageSize`, `search
 
 - `apps/shell` owns login and post-login home dashboard.
 - Domain screens live as standalone apps: Sales, CRM, FMS, Admin.
+- Frontend route version is resolved at runtime from authenticated profile data (`frontend_version`).
 - Frontend apps follow FSD layers: `app`, `pages`, `widgets`, `features`, `entities`, `shared`.
 - `packages/ui-kit` will own shared design tokens/primitives.
 - `packages/contracts` will own shared `zod` schemas and TypeScript types.

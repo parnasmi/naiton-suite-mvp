@@ -1,7 +1,25 @@
 {
-  "frontendVersion": "v1.0.0",
   "searchShortcut": "MetaOrCtrl+K",
   "templateDir": "templates/fsd-app",
+  "routing": {
+    "versionSourceField": "frontend_version",
+    "latestVersionField": "latest_frontend_version",
+    "fallbackStrategy": "latest",
+    "hosts": {
+      "shell": "app.naiton.com",
+      "sales": "sales.naiton.com",
+      "crm": "crm.naiton.com",
+      "fms": "fms.naiton.com",
+      "admin": "admin.naiton.com"
+    },
+    "paths": {
+      "shell": "/{semver}/shell",
+      "sales": "/{semver}/",
+      "crm": "/{semver}/",
+      "fms": "/{semver}/",
+      "admin": "/{semver}/"
+    }
+  },
   "api": {
     "workspace": "apps/api-mock",
     "port": 4000,
@@ -12,27 +30,27 @@
     "shell": {
       "workspace": "apps/shell",
       "port": 3000,
-      "basename": "/v1.0.0/shell"
+      "routeTemplate": "/{semver}/shell"
     },
     "sales": {
       "workspace": "apps/sales",
       "port": 3001,
-      "basename": "/v1.0.0/sales"
+      "routeTemplate": "/{semver}/"
     },
     "crm": {
       "workspace": "apps/crm",
       "port": 3002,
-      "basename": "/v1.0.0/crm"
+      "routeTemplate": "/{semver}/"
     },
     "fms": {
       "workspace": "apps/fms",
       "port": 3003,
-      "basename": "/v1.0.0/fms"
+      "routeTemplate": "/{semver}/"
     },
     "admin": {
       "workspace": "apps/admin",
       "port": 3004,
-      "basename": "/v1.0.0/admin"
+      "routeTemplate": "/{semver}/"
     }
   },
   "pathAliases": {
@@ -52,8 +70,15 @@
     ]
   },
   "envVars": {
-    "frontendVersion": "NAITON_FRONTEND_VERSION",
     "apiPort": "NAITON_API_PORT",
-    "apiBaseUrl": "NAITON_API_BASE_URL"
+    "apiBaseUrl": "NAITON_API_BASE_URL",
+    "versionSourceField": "NAITON_VERSION_SOURCE_FIELD",
+    "latestVersionField": "NAITON_LATEST_VERSION_FIELD",
+    "versionFallback": "NAITON_VERSION_FALLBACK",
+    "shellHost": "NAITON_SHELL_HOST",
+    "salesHost": "NAITON_SALES_HOST",
+    "crmHost": "NAITON_CRM_HOST",
+    "fmsHost": "NAITON_FMS_HOST",
+    "adminHost": "NAITON_ADMIN_HOST"
   }
 }

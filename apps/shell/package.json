@@ -13,7 +13,8 @@
   "naiton": {
     "kind": "frontend-app",
     "port": 3000,
-    "basename": "/v1.0.0/shell",
+    "routeTemplate": "/{semver}/shell",
+    "productionHostEnvVar": "NAITON_SHELL_HOST",
     "template": "templates/fsd-app"
   }
 }
