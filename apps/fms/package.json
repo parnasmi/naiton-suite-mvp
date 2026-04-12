@@ -13,7 +13,8 @@
   "naiton": {
     "kind": "frontend-app",
     "port": 3003,
-    "basename": "/v1.0.0/fms",
+    "routeTemplate": "/{semver}/",
+    "productionHostEnvVar": "NAITON_FMS_HOST",
     "template": "templates/fsd-app"
   }
 }

@@ -7,9 +7,21 @@
     "templates/fsd-app/tsconfig.template.json"
   ],
   "globalEnv": [
-    "NAITON_FRONTEND_VERSION",
     "NAITON_API_PORT",
-    "NAITON_API_BASE_URL"
+    "NAITON_API_BASE_URL",
+    "NAITON_VERSION_SOURCE_FIELD",
+    "NAITON_LATEST_VERSION_FIELD",
+    "NAITON_VERSION_FALLBACK",
+    "NAITON_SHELL_HOST",
+    "NAITON_SALES_HOST",
+    "NAITON_CRM_HOST",
+    "NAITON_FMS_HOST",
+    "NAITON_ADMIN_HOST",
+    "SHELL_ROUTE_TEMPLATE",
+    "SALES_ROUTE_TEMPLATE",
+    "CRM_ROUTE_TEMPLATE",
+    "FMS_ROUTE_TEMPLATE",
+    "ADMIN_ROUTE_TEMPLATE"
   ],
   "tasks": {
     "dev": {

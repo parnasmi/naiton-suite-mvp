@@ -13,7 +13,8 @@
   "naiton": {
     "kind": "frontend-app",
     "port": 3002,
-    "basename": "/v1.0.0/crm",
+    "routeTemplate": "/{semver}/",
+    "productionHostEnvVar": "NAITON_CRM_HOST",
     "template": "templates/fsd-app"
   }
 }
