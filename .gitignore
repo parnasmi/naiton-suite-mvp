@@ -1,0 +1,52 @@
+# Dependencies
+node_modules/
+**/node_modules/
+.pnpm-store/
+.npm/
+.yarn/
+
+# Turborepo
+.turbo/
+
+# Build and cache outputs
+dist/
+build/
+coverage/
+.cache/
+.eslintcache
+.parcel-cache/
+.vite/
+storybook-static/
+*.tsbuildinfo
+
+# Framework outputs
+.next/
+.nuxt/
+.svelte-kit/
+out/
+
+# Environment files
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local databases and runtime files
+*.pid
+*.pid.lock
+*.sqlite
+*.sqlite3
+*.db
+
+# Editor and OS files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
