@@ -1,0 +1,19 @@
+{
+  "name": "@naiton/fms",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/fms",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/fms",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/fms",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/fms",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/fms"
+  },
+  "naiton": {
+    "kind": "frontend-app",
+    "port": 3003,
+    "basename": "/v1.0.0/fms",
+    "template": "templates/fsd-app"
+  }
+}

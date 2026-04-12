@@ -1,0 +1,18 @@
+{
+  "name": "@naiton/contracts",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/contracts",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/contracts",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/contracts",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/contracts",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/contracts"
+  },
+  "naiton": {
+    "kind": "shared-package"
+  }
+}

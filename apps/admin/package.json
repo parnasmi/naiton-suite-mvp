@@ -1,0 +1,19 @@
+{
+  "name": "@naiton/admin",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/admin",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/admin",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/admin",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/admin",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/admin"
+  },
+  "naiton": {
+    "kind": "frontend-app",
+    "port": 3004,
+    "basename": "/v1.0.0/admin",
+    "template": "templates/fsd-app"
+  }
+}

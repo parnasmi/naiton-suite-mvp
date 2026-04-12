@@ -52,10 +52,22 @@
 
 ## 1. Phase 1 - Workspace Foundation
 
-- [ ] Initialize root workspace files, shared scripts, TypeScript base config, and Turborepo pipelines.
-- [ ] Create empty app/package manifests and a reusable FSD folder template for every frontend app.
-- [ ] Lock environment conventions for ports, env vars, path aliases, and versioned route basenames.
-- [ ] Define root commands that must remain stable for the whole project: `dev`, `build`, `lint`, `typecheck`, `test`.
+- [x] Initialize root workspace files, shared scripts, TypeScript base config, and Turborepo pipelines.
+- [x] Create empty app/package manifests and a reusable FSD folder template for every frontend app.
+- [x] Lock environment conventions for ports, env vars, path aliases, and versioned route basenames.
+- [x] Define root commands that must remain stable for the whole project: `dev`, `build`, `lint`, `typecheck`, `test`.
+
+### Files changed
+
+- `package.json`, `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json` - added the root workspace manifest, package discovery, Turborepo task graph, and shared TypeScript defaults.
+- `workspace.config.json`, `.env.example` - locked the Phase 1 conventions for app versioning, ports, basenames, and environment variable names.
+- `scripts/placeholder-task.mjs` - added a shared placeholder runner so every workspace already exposes stable `dev`, `build`, `lint`, `typecheck`, and `test` scripts.
+- `templates/fsd-app/README.md`, `templates/fsd-app/tsconfig.template.json` - added the reusable FSD template with the agreed folder layers and local path alias mappings.
+- `apps/shell/package.json`, `apps/sales/package.json`, `apps/crm/package.json`, `apps/fms/package.json`, `apps/admin/package.json` - created empty frontend workspace manifests with fixed ports, versioned basenames, and placeholder scripts.
+- `apps/api-mock/package.json` - created the empty API workspace manifest with the reserved mock API port and `/api` base path.
+- `packages/ui-kit/package.json`, `packages/search-engine/package.json`, `packages/contracts/package.json` - created shared package manifests so the monorepo topology is fully declared from Phase 1.
+- `packages/ui-kit/src/index.ts`, `packages/search-engine/src/index.ts`, `packages/contracts/src/index.ts` - added placeholder entry points to anchor the shared package aliases declared in the root TypeScript config.
+- Local directories under `apps/*/src/{app,pages,widgets,features,entities,shared}` and `apps/api-mock/src`, plus `packages/*/src` - created the empty workspace structure without starting any Phase 2 implementation.
 
 ## 2. Phase 2 - Shared Platform
 

@@ -1,0 +1,18 @@
+{
+  "name": "@naiton/ui-kit",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/ui-kit",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/ui-kit",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/ui-kit",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/ui-kit",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/ui-kit"
+  },
+  "naiton": {
+    "kind": "shared-package"
+  }
+}

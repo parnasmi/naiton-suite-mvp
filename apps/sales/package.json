@@ -1,0 +1,19 @@
+{
+  "name": "@naiton/sales",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/sales",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/sales",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/sales",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/sales",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/sales"
+  },
+  "naiton": {
+    "kind": "frontend-app",
+    "port": 3001,
+    "basename": "/v1.0.0/sales",
+    "template": "templates/fsd-app"
+  }
+}

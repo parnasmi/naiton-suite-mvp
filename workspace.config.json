@@ -1,0 +1,59 @@
+{
+  "frontendVersion": "v1.0.0",
+  "searchShortcut": "MetaOrCtrl+K",
+  "templateDir": "templates/fsd-app",
+  "api": {
+    "workspace": "apps/api-mock",
+    "port": 4000,
+    "baseUrl": "http://localhost:4000",
+    "apiBaseUrl": "http://localhost:4000/api"
+  },
+  "apps": {
+    "shell": {
+      "workspace": "apps/shell",
+      "port": 3000,
+      "basename": "/v1.0.0/shell"
+    },
+    "sales": {
+      "workspace": "apps/sales",
+      "port": 3001,
+      "basename": "/v1.0.0/sales"
+    },
+    "crm": {
+      "workspace": "apps/crm",
+      "port": 3002,
+      "basename": "/v1.0.0/crm"
+    },
+    "fms": {
+      "workspace": "apps/fms",
+      "port": 3003,
+      "basename": "/v1.0.0/fms"
+    },
+    "admin": {
+      "workspace": "apps/admin",
+      "port": 3004,
+      "basename": "/v1.0.0/admin"
+    }
+  },
+  "pathAliases": {
+    "frontend": [
+      "@/*",
+      "@app/*",
+      "@pages/*",
+      "@widgets/*",
+      "@features/*",
+      "@entities/*",
+      "@shared/*"
+    ],
+    "packages": [
+      "@naiton/ui-kit",
+      "@naiton/search-engine",
+      "@naiton/contracts"
+    ]
+  },
+  "envVars": {
+    "frontendVersion": "NAITON_FRONTEND_VERSION",
+    "apiPort": "NAITON_API_PORT",
+    "apiBaseUrl": "NAITON_API_BASE_URL"
+  }
+}

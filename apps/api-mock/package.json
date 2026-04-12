@@ -1,0 +1,18 @@
+{
+  "name": "@naiton/api-mock",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/api-mock",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/api-mock",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/api-mock",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/api-mock",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/api-mock"
+  },
+  "naiton": {
+    "kind": "api",
+    "port": 4000,
+    "apiBasePath": "/api"
+  }
+}

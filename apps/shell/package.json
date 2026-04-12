@@ -1,0 +1,19 @@
+{
+  "name": "@naiton/shell",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/shell",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/shell",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/shell",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/shell",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/shell"
+  },
+  "naiton": {
+    "kind": "frontend-app",
+    "port": 3000,
+    "basename": "/v1.0.0/shell",
+    "template": "templates/fsd-app"
+  }
+}

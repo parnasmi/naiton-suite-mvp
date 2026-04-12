@@ -1,0 +1,19 @@
+{
+  "name": "@naiton/crm",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/crm",
+    "build": "node ../../scripts/placeholder-task.mjs build @naiton/crm",
+    "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/crm",
+    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/crm",
+    "test": "node ../../scripts/placeholder-task.mjs test @naiton/crm"
+  },
+  "naiton": {
+    "kind": "frontend-app",
+    "port": 3002,
+    "basename": "/v1.0.0/crm",
+    "template": "templates/fsd-app"
+  }
+}
