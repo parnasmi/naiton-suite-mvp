@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Manrope", "Segoe UI", "Helvetica Neue", sans-serif;
+  --font-display: "Sora", "Avenir Next", "Segoe UI", sans-serif;
+
+  --color-brand-50: #f2f8ff;
+  --color-brand-100: #d8eaff;
+  --color-brand-200: #b6d6ff;
+  --color-brand-300: #8ab8ff;
+  --color-brand-400: #5b97ff;
+  --color-brand-500: #2f6dff;
+  --color-brand-600: #234fe0;
+  --color-brand-700: #1e3fb1;
+  --color-brand-800: #1d398b;
+  --color-brand-900: #1d3270;
+
+  --color-surface-0: #f4f7fb;
+  --color-surface-1: #ffffff;
+  --color-surface-2: #edf2f8;
+  --color-ink-900: #0f172a;
+  --color-ink-700: #334155;
+  --color-ink-500: #64748b;
+
+  --radius-panel: 1rem;
+  --radius-control: 0.75rem;
+
+  --shadow-soft: 0 16px 36px -24px rgba(15, 23, 42, 0.5);
+  --shadow-panel: 0 24px 48px -28px rgba(15, 23, 42, 0.55);
+}
+
+:root {
+  color: var(--color-ink-900);
+  background: radial-gradient(circle at top right, #e6f0ff 0%, var(--color-surface-0) 40%, #f8fafc 100%);
+}
+
+[data-theme="dark"] {
+  --color-surface-0: #0b1220;
+  --color-surface-1: #141c2f;
+  --color-surface-2: #1f2940;
+  --color-ink-900: #f8fafc;
+  --color-ink-700: #d1dae8;
+  --color-ink-500: #a3b0c4;
+}
+
+.naiton-card {
+  border-radius: var(--radius-panel);
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: color-mix(in oklab, var(--color-surface-1) 96%, white 4%);
+  box-shadow: var(--shadow-soft);
+}
+
+.naiton-control {
+  border-radius: var(--radius-control);
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: var(--color-surface-1);
+}

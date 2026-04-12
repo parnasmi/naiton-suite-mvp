@@ -81,10 +81,41 @@
 
 ## 2. Phase 2 - Shared Platform
 
-- [ ] Build `packages/ui-kit` with Tailwind v4 tokens, layout primitives, tables, cards, metric widgets, auth controls, and shared chrome matching the screenshots.
-- [ ] Build `packages/contracts` with `zod` schemas and TypeScript types shared by API and apps.
-- [ ] Build `packages/search-engine` with command palette shell, search result groups, and app registration hooks.
-- [ ] Add shared provider setup for theme, query client, session state, and command palette state.
+- [x] Build `packages/ui-kit` with Tailwind v4 tokens, layout primitives, tables, cards, metric widgets, auth controls, and shared chrome matching the screenshots.
+- [x] Build `packages/contracts` with `zod` schemas and TypeScript types shared by API and apps.
+- [x] Build `packages/search-engine` with command palette shell, search result groups, and app registration hooks.
+- [x] Add shared provider setup for theme, query client, session state, and command palette state.
+
+### Files changed
+
+- `packages/contracts/package.json` - replaced placeholder scripts with real TypeScript checks and added the `zod` runtime dependency.
+- `packages/contracts/tsconfig.json` - added package-level TypeScript configuration extending the monorepo base config.
+- `packages/contracts/src/index.ts` - implemented shared `zod` schemas and exported TypeScript contracts for auth, navigation, dashboard, sales, CRM, FMS, admin, and search payloads.
+- `packages/search-engine/package.json` - replaced placeholder scripts with real TypeScript checks and added React dependencies for provider/shell implementation.
+- `packages/search-engine/tsconfig.json` - added package-level TypeScript configuration for the search engine package.
+- `packages/search-engine/src/types.ts` - added command palette item, source registry, grouping, and provider API interfaces.
+- `packages/search-engine/src/provider.tsx` - implemented `SearchProvider` with source registry management, `Ctrl/Cmd+K` shortcut handling, grouped async search execution, and command palette state.
+- `packages/search-engine/src/hooks.ts` - added app-facing hooks for command palette access and source registration.
+- `packages/search-engine/src/components/command-palette-shell.tsx` - added a reusable command palette shell UI with grouped results and keyboard navigation.
+- `packages/search-engine/src/index.ts` - exported the package public API (`SearchProvider`, hooks, shell component, and registry types).
+- `packages/ui-kit/package.json` - replaced placeholder scripts with real TypeScript checks and added package dependencies (`react-query`, `zustand`, `react-table`, Tailwind v4, and workspace package links).
+- `packages/ui-kit/tsconfig.json` - added package-level TypeScript configuration for UI kit source files.
+- `packages/ui-kit/src/styles/tokens.css` - added Tailwind v4 theme tokens, brand palette, typography tokens, and shared control/card style classes.
+- `packages/ui-kit/src/lib/cn.ts` - added a shared class name merge helper used by UI primitives.
+- `packages/ui-kit/src/components/auth-panel.tsx` - implemented the shared login/auth form panel with loading and error states.
+- `packages/ui-kit/src/components/shell-chrome.tsx` - implemented top shell bar, side rail, and shell layout primitives for cross-app chrome.
+- `packages/ui-kit/src/components/data-grid.tsx` - implemented a generic table primitive on top of `@tanstack/react-table` with sorting and empty/loading states.
+- `packages/ui-kit/src/components/metric-cards.tsx` - implemented standard KPI cards and ring-progress metric cards.
+- `packages/ui-kit/src/components/search-input.tsx` - implemented shared search input with hotkey hint affordance.
+- `packages/ui-kit/src/components/status-badge.tsx` - implemented shared status badge and status dot primitives for table/card statuses.
+- `packages/ui-kit/src/components/map-panel.tsx` - implemented a map panel surface with marker plotting and selected marker emphasis.
+- `packages/ui-kit/src/components/command-palette.tsx` - implemented a shared command palette UI component with grouped results.
+- `packages/ui-kit/src/components/surface-card.tsx` - implemented a lightweight shared card/layout surface primitive.
+- `packages/ui-kit/src/providers/theme-provider.tsx` - implemented shared theme state management (`light`/`dark`/`system`) with DOM theme syncing.
+- `packages/ui-kit/src/providers/session-provider.tsx` - implemented shared `zustand` session store provider/hook setup backed by contracts.
+- `packages/ui-kit/src/providers/platform-providers.tsx` - implemented the combined provider stack for theme, query client, session state, and command palette state.
+- `packages/ui-kit/src/index.ts` - exported the new UI kit primitives, provider APIs, and command palette hooks.
+- `pnpm-lock.yaml` - updated lockfile for new Phase 2 dependencies across shared packages.
 
 ## 3. Phase 3 - Mock API
 
