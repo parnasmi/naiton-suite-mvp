@@ -6,7 +6,7 @@ The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, an
 
 ## Current Status
 
-Phase 1, Phase 2, Phase 3, and Phase 4 are completed:
+Phase 1, Phase 2, Phase 3, Phase 4, and Phase 5 are completed:
 - Monorepo foundation and package topology are in place.
 - Shared platform packages are implemented:
   - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
@@ -14,7 +14,8 @@ Phase 1, Phase 2, Phase 3, and Phase 4 are completed:
   - `@naiton/ui-kit` (Tailwind v4 tokens, shared chrome/primitives, provider stack)
 - `apps/api-mock` is fully implemented with version-aware routing, seeded fixtures, auth/session handling, list-query parsing, and contract smoke tests.
 - `apps/shell` is now a real Vite/React app with login, session restore, guarded routing, runtime semver fallback resolution, host-aware module links, and a screenshot-matching dashboard shell.
-- `apps/sales`, `apps/crm`, `apps/fms`, and `apps/admin` are still placeholders for Phase 5+ UI implementation.
+- `apps/sales` is now a real Vite/React app with a screenshot-oriented Orders screen, reserved Sales subsection routes, and typed query wiring (search/sort/page size/filters).
+- `apps/crm`, `apps/fms`, and `apps/admin` remain placeholders for later phases.
 
 ## Tech Stack
 
@@ -82,9 +83,9 @@ pnpm typecheck
 pnpm test
 ```
 
-These run through Turborepo. `@naiton/shell` and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
+These run through Turborepo. `@naiton/shell`, `@naiton/sales`, and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
 
-## Run Phase 4 Locally
+## Run Phase 5 Locally
 
 Start mock API:
 
@@ -96,6 +97,12 @@ Start shell app:
 
 ```bash
 pnpm --filter @naiton/shell dev
+```
+
+Start Sales app:
+
+```bash
+pnpm --filter @naiton/sales dev
 ```
 
 Default login users from seed fixtures:
@@ -116,6 +123,26 @@ Default login users from seed fixtures:
 - Host-aware module links preserve the resolved semver route segment.
 - Post-login shell dashboard includes shared top nav/search, notification/profile controls, chart placeholders, activity panel, and command palette (`Ctrl/Cmd+K`).
 - Disabled/coming-soon modules remain visible and non-clickable.
+
+## Phase 5 Sales Behavior
+
+- Sales app renders the supplied Orders layout with:
+  - green shared top nav
+  - left Sales subsection rail
+  - search/filter toolbar
+  - dense orders data grid with status/boolean indicators
+  - primary `New order` CTA
+- Reserved route space exists for future subsections:
+  - `/{semver}/` and `/{semver}/orders` (implemented Orders screen)
+  - `/{semver}/offers` and `/{semver}/subscriptions` (reserved placeholders)
+- Orders list query is wired to typed API client params:
+  - `search`
+  - `sort`
+  - `pageSize`
+  - `status` filter
+  - `manager` filter
+- Table behavior reuses `@naiton/ui-kit` `DataGrid` with controlled/manual sorting support for server-driven sort queries.
+- On bootstrap, Sales restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
 ## Mock API Surface
 
@@ -147,10 +174,9 @@ Defined in `.env.example`:
 
 ## Roadmap Snapshot
 
-1. Phase 5: Sales app orders screen.
-2. Phase 6: CRM companies screen.
-3. Phase 7: FMS fleet + map screen.
-4. Phase 8: Admin dashboard + polish + CI-ready checks.
+1. Phase 6: CRM companies screen.
+2. Phase 7: FMS fleet + map screen.
+3. Phase 8: Admin dashboard + polish + CI-ready checks.
 
 ---
 

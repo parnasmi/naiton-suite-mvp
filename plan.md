@@ -204,10 +204,31 @@ All endpoints below are relative to a runtime-resolved, versioned backend base U
 
 ## 5. Phase 5 - Sales App
 
-- [ ] Build the Sales orders screen with left module rail, shared top nav, search/filter strip, orders data grid, status icons, and primary CTA.
-- [ ] Reuse `ui-kit` table primitives so rows, sorting, and toolbar controls behave consistently with CRM.
-- [ ] Reserve route space for future Sales subsections while populating only the supplied Orders screen in MVP.
-- [ ] Wire search, sort, page size, and mock filters to the typed orders client.
+- [x] Build the Sales orders screen with left module rail, shared top nav, search/filter strip, orders data grid, status icons, and primary CTA.
+- [x] Reuse `ui-kit` table primitives so rows, sorting, and toolbar controls behave consistently with CRM.
+- [x] Reserve route space for future Sales subsections while populating only the supplied Orders screen in MVP.
+- [x] Wire search, sort, page size, and mock filters to the typed orders client.
+
+### Files changed
+
+- `apps/sales/package.json` - replaced placeholder scripts with a real Vite/React runtime and added Sales app dependencies.
+- `apps/sales/tsconfig.json` - added app-level TypeScript config with FSD aliases and Vite client typings.
+- `apps/sales/vite.config.ts` - added Sales Vite config with fixed dev port and env passthrough.
+- `apps/sales/index.html` - added Sales app HTML entrypoint.
+- `apps/sales/src/main.tsx` - added Sales bootstrap wiring (`PlatformProviders`, router, runtime provider, and shared tokens/styles).
+- `apps/sales/src/app/App.tsx` - added top-level Sales app composition with router and command palette shell.
+- `apps/sales/src/app/router.tsx` - implemented bootstrap/guarded routes, semver path correction, top-nav module mapping, and reserved Sales subsection route handling.
+- `apps/sales/src/app/runtime-provider.tsx` - implemented Sales session bootstrap (restore or seeded dev login), runtime frontend/backend version resolution, and persisted auth state.
+- `apps/sales/src/app/app.css` - added screenshot-oriented Sales layout styles (green top bar, left rail, toolbar strip, dense grid shell, responsive behavior).
+- `apps/sales/src/pages/sales-page.tsx` - implemented Orders screen UI, reserved subsection placeholders, and API-wired table/filter/pagination behavior.
+- `apps/sales/src/shared/api/client.ts` - extended typed Sales client wrapper with auth/session/navigation methods and optional runtime backend version inputs.
+- `apps/sales/src/shared/config/runtime.ts` - added runtime API-origin and module host/port resolution helpers for Sales host-aware links.
+- `apps/sales/src/shared/lib/frontend-version.ts` - added frontend semver resolution with fallback-to-latest behavior.
+- `apps/sales/src/shared/lib/navigation.ts` - added host-aware module URL builder that preserves resolved `{semver}` route segments.
+- `apps/sales/src/shared/lib/session-storage.ts` - added localStorage-backed Sales auth/session persistence with Shell-key fallback parsing.
+- `packages/ui-kit/src/components/data-grid.tsx` - added controlled/manual sorting support so app screens can wire table sort state to server list queries.
+- `packages/ui-kit/src/index.ts` - exported new DataGrid sorting state/change function types for app-level controlled table wiring.
+- `pnpm-lock.yaml` - refreshed lock metadata after Phase 5 workspace/package updates.
 
 ## 6. Phase 6 - CRM App
 

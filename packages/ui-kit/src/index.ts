@@ -8,7 +8,12 @@ export {
   type ShellLayoutProps,
   type ShellModuleLink
 } from "./components/shell-chrome";
-export { DataGrid, type DataGridProps } from "./components/data-grid";
+export {
+  DataGrid,
+  type DataGridProps,
+  type DataGridSortingState,
+  type DataGridSortingChangeFn
+} from "./components/data-grid";
 export {
   MetricCard,
   MetricRingCard,

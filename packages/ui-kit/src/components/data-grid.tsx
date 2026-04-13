@@ -3,10 +3,14 @@ import {
   getCoreRowModel,
   getSortedRowModel,
   useReactTable,
+  type OnChangeFn,
   type ColumnDef,
   type SortingState
 } from "@tanstack/react-table";
 import { useMemo, useState, type ReactNode } from "react";
+
+export type DataGridSortingState = SortingState;
+export type DataGridSortingChangeFn = OnChangeFn<SortingState>;
 
 export interface DataGridProps<TData> {
   data: TData[];
@@ -14,6 +18,9 @@ export interface DataGridProps<TData> {
   emptyState?: ReactNode;
   isLoading?: boolean;
   onRowClick?: (row: TData) => void;
+  sorting?: DataGridSortingState;
+  onSortingChange?: DataGridSortingChangeFn;
+  manualSorting?: boolean;
 }
 
 export function DataGrid<TData>({
@@ -21,17 +28,22 @@ export function DataGrid<TData>({
   columns,
   emptyState = "No data available",
   isLoading = false,
-  onRowClick
+  onRowClick,
+  sorting,
+  onSortingChange,
+  manualSorting = false
 }: DataGridProps<TData>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [internalSorting, setInternalSorting] = useState<SortingState>([]);
+  const resolvedSorting = sorting ?? internalSorting;
+  const resolvedOnSortingChange = onSortingChange ?? setInternalSorting;
 
   const table = useReactTable({
     data,
     columns,
-    state: { sorting },
-    onSortingChange: setSorting,
+    state: { sorting: resolvedSorting },
+    onSortingChange: resolvedOnSortingChange,
     getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel()
+    ...(manualSorting ? {} : { getSortedRowModel: getSortedRowModel() })
   });
 
   const headerGroups = useMemo(() => table.getHeaderGroups(), [table]);
