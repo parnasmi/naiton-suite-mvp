@@ -172,15 +172,35 @@ All endpoints below are relative to a runtime-resolved, versioned backend base U
 
 ## 4. Phase 4 - Shell App
 
-- [ ] Build the login screen with close-match layout, brand treatment, language selector, cookie settings stub, and terms/privacy links.
-- [ ] Implement login, logout, session restore, permission loading, and guarded navigation against the mock API.
-- [ ] After login/session restore, resolve `{semver}` from `frontend_version` and redirect to `app.naiton.com/{semver}/shell`.
-- [ ] After login/session restore, resolve backend API base URL semver from `backend_version` and initialize typed API clients with that runtime base URL.
-- [ ] Build host-aware nav routing from shell to module subdomains using the same resolved `{semver}` path segment.
-- [ ] If requested version is unavailable, fallback to `latest_frontend_version` before redirecting.
-- [ ] If requested backend API version is unavailable, fallback API base URL resolution to `latest_backend_version` before loading protected data.
-- [ ] Build the post-login home dashboard with the shared top nav, search bar, notifications/settings/profile controls, charts, and activity panel from the screenshots.
-- [ ] Make the shell the launch point for all other apps and keep disabled modules visibly present but non-navigable.
+- [x] Build the login screen with close-match layout, brand treatment, language selector, cookie settings stub, and terms/privacy links.
+- [x] Implement login, logout, session restore, permission loading, and guarded navigation against the mock API.
+- [x] After login/session restore, resolve `{semver}` from `frontend_version` and redirect to `app.naiton.com/{semver}/shell`.
+- [x] After login/session restore, resolve backend API base URL semver from `backend_version` and initialize typed API clients with that runtime base URL.
+- [x] Build host-aware nav routing from shell to module subdomains using the same resolved `{semver}` path segment.
+- [x] If requested version is unavailable, fallback to `latest_frontend_version` before redirecting.
+- [x] If requested backend API version is unavailable, fallback API base URL resolution to `latest_backend_version` before loading protected data.
+- [x] Build the post-login home dashboard with the shared top nav, search bar, notifications/settings/profile controls, charts, and activity panel from the screenshots.
+- [x] Make the shell the launch point for all other apps and keep disabled modules visibly present but non-navigable.
+
+### Files changed
+
+- `apps/shell/package.json` - replaced placeholder scripts with a real Vite/React shell app runtime and added Phase 4 dependencies.
+- `apps/shell/tsconfig.json` - added shell TypeScript config with FSD path aliases and Vite client types.
+- `apps/shell/vite.config.ts` - added Vite config with React plugin, env passthrough, and fixed shell dev server port.
+- `apps/shell/index.html` - added the shell app HTML entrypoint.
+- `apps/shell/src/main.tsx` - added shell bootstrap wiring (`PlatformProviders`, router, runtime provider, and global styles).
+- `apps/shell/src/app/App.tsx` - added top-level shell app composition with router and command palette shell UI.
+- `apps/shell/src/app/router.tsx` - implemented guarded routing, login flow, session-aware redirects, host-aware navigation links, and API-backed dashboard/search data loading.
+- `apps/shell/src/app/runtime-provider.tsx` - implemented login/logout/session-restore orchestration, permission/session hydration, runtime semver fallback resolution, and persisted auth state handling.
+- `apps/shell/src/app/app.css` - added close-match styling for login and post-login shell dashboard layouts from supplied screenshots.
+- `apps/shell/src/pages/login-page.tsx` - implemented screenshot-matching login UI with language selector, terms/privacy links, and cookie settings stub.
+- `apps/shell/src/pages/shell-home-page.tsx` - implemented the shell home dashboard UI with top nav, search bar trigger, module links, notifications/profile controls, chart panels, and activity feed.
+- `apps/shell/src/shared/config/runtime.ts` - added runtime env helpers for API origin resolution and host/port mapping per module.
+- `apps/shell/src/shared/lib/frontend-version.ts` - added frontend semver resolution logic with fallback-to-latest behavior.
+- `apps/shell/src/shared/lib/navigation.ts` - added host-aware module URL builder preserving resolved `{semver}` path segments.
+- `apps/shell/src/shared/lib/permissions.ts` - added module/dashboard permission guards used by routing and nav visibility logic.
+- `apps/shell/src/shared/lib/session-storage.ts` - added localStorage-backed persisted auth/session helpers for session restore.
+- `pnpm-lock.yaml` - updated lockfile for the new shell frontend dependencies.
 
 ## 5. Phase 5 - Sales App
 
