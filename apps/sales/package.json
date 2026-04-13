@@ -4,14 +4,26 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node ../../scripts/placeholder-task.mjs dev @naiton/sales",
-    "build": "node ../../scripts/placeholder-task.mjs build @naiton/sales",
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
     "lint": "node ../../scripts/placeholder-task.mjs lint @naiton/sales",
-    "typecheck": "node ../../scripts/placeholder-task.mjs typecheck @naiton/sales",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "node ../../scripts/placeholder-task.mjs test @naiton/sales"
   },
   "dependencies": {
-    "@naiton/contracts": "workspace:*"
+    "@naiton/contracts": "workspace:*",
+    "@naiton/search-engine": "workspace:*",
+    "@naiton/ui-kit": "workspace:*",
+    "@tanstack/react-query": "^5.80.10",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^5.4.11"
   },
   "naiton": {
     "kind": "frontend-app",
