@@ -6,16 +6,16 @@ import { useRegisterSearchSource } from "@naiton/ui-kit";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 import {
-  CrmPage,
-  type CrmSection,
-  type CrmTopModuleItem
-} from "../pages/crm-page";
+  AdminPage,
+  type AdminSection,
+  type AdminTopModuleItem
+} from "../pages/admin-page";
 import { buildModuleHref } from "../shared/lib/navigation";
-import { useCrmRuntime } from "./runtime-provider";
+import { useAdminRuntime } from "./runtime-provider";
 
-const crmPathForVersion = (frontendVersion: string): string => `/${frontendVersion}/`;
+const adminPathForVersion = (frontendVersion: string): string => `/${frontendVersion}/`;
 
-const sectionKeys = new Set<CrmSection>(["companies", "contacts", "pipeline", "labels"]);
+const sectionKeys = new Set<AdminSection>(["overview", "users", "roles", "integrations", "audit"]);
 
 const topModuleOrder: NavModuleKey[] = [
   "sales",
@@ -26,6 +26,7 @@ const topModuleOrder: NavModuleKey[] = [
   "accounting",
   "hrm",
   "fms",
+  "admin",
   "cms"
 ];
 
@@ -36,7 +37,7 @@ const permissionByModule: Partial<Record<NavModuleKey, string>> = {
   admin: "admin:read"
 };
 
-const isKnownSection = (value: string): value is CrmSection => sectionKeys.has(value as CrmSection);
+const isKnownSection = (value: string): value is AdminSection => sectionKeys.has(value as AdminSection);
 
 const canAccessModule = (
   sessionPermissions: string[],
@@ -55,7 +56,7 @@ const canAccessModule = (
 };
 
 interface SearchSourceInput {
-  apiClient: ReturnType<typeof useCrmRuntime>["apiClient"];
+  apiClient: ReturnType<typeof useAdminRuntime>["apiClient"];
   modules: NavModule[];
   sessionPermissions: string[];
   frontendVersion: string;
@@ -71,7 +72,7 @@ const createSearchSource = ({
   const hasWildcard = sessionPermissions.includes("*");
 
   return {
-    id: "crm-api-search",
+    id: "admin-api-search",
     label: "Naiton",
     priority: 100,
     async getItems({ query, signal }) {
@@ -110,21 +111,21 @@ const createSearchSource = ({
 
 function BusyState({ label }: { label: string }) {
   return (
-    <div className="crm-busy-state">
-      <div className="crm-busy-spinner" />
+    <div className="admin-busy-state">
+      <div className="admin-busy-spinner" />
       <p>{label}</p>
     </div>
   );
 }
 
 function BootstrapErrorState() {
-  const runtime = useCrmRuntime();
+  const runtime = useAdminRuntime();
 
   return (
-    <div className="crm-busy-state">
-      <h1>CRM session failed to initialize</h1>
+    <div className="admin-busy-state">
+      <h1>Admin session failed to initialize</h1>
       <p>{runtime.bootstrapError ?? "Unexpected bootstrap error"}</p>
-      <button type="button" className="crm-retry-button" onClick={runtime.retryBootstrap}>
+      <button type="button" className="admin-retry-button" onClick={runtime.retryBootstrap}>
         Retry
       </button>
     </div>
@@ -132,21 +133,21 @@ function BootstrapErrorState() {
 }
 
 function RootRoute() {
-  const runtime = useCrmRuntime();
+  const runtime = useAdminRuntime();
 
   if (runtime.isBootstrapping || runtime.status === "loading") {
-    return <BusyState label="Initializing CRM..." />;
+    return <BusyState label="Initializing Admin..." />;
   }
 
   if (runtime.status === "authenticated" && runtime.resolvedFrontendVersion) {
-    return <Navigate to={crmPathForVersion(runtime.resolvedFrontendVersion)} replace />;
+    return <Navigate to={adminPathForVersion(runtime.resolvedFrontendVersion)} replace />;
   }
 
   return <BootstrapErrorState />;
 }
 
-function VersionedCrmRoute() {
-  const runtime = useCrmRuntime();
+function VersionedAdminRoute() {
+  const runtime = useAdminRuntime();
   const { semver } = useParams();
   const location = useLocation();
 
@@ -163,19 +164,19 @@ function VersionedCrmRoute() {
     return stripped.startsWith("/") ? stripped : `/${stripped}`;
   }, [location.pathname]);
 
-  const section = useMemo<CrmSection | null>(() => {
-    const firstSegment = pathSuffix.split("/").filter(Boolean)[0] ?? "companies";
+  const section = useMemo<AdminSection | null>(() => {
+    const firstSegment = pathSuffix.split("/").filter(Boolean)[0] ?? "overview";
     return isKnownSection(firstSegment) ? firstSegment : null;
   }, [pathSuffix]);
 
   const navigationQuery = useQuery({
-    queryKey: ["crm", "navigation", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
+    queryKey: ["admin", "navigation", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
     queryFn: () => runtime.apiClient.getNavigation(),
     enabled: isAuthenticated
   });
 
   const notificationsQuery = useQuery({
-    queryKey: ["crm", "notifications", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
+    queryKey: ["admin", "notifications", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
     queryFn: () => runtime.apiClient.getNotifications(),
     enabled: isAuthenticated
   });
@@ -191,7 +192,7 @@ function VersionedCrmRoute() {
 
   useRegisterSearchSource(searchSource, isAuthenticated);
 
-  const modules = useMemo<CrmTopModuleItem[]>(() => {
+  const modules = useMemo<AdminTopModuleItem[]>(() => {
     if (!resolvedFrontendVersion) {
       return [];
     }
@@ -199,7 +200,7 @@ function VersionedCrmRoute() {
     const availableModules = new Map((navigationQuery.data ?? []).map((module) => [module.key, module]));
 
     return topModuleOrder
-      .map((key): CrmTopModuleItem | null => {
+      .map((key): AdminTopModuleItem | null => {
         const module = availableModules.get(key);
         if (!module) {
           return null;
@@ -213,15 +214,15 @@ function VersionedCrmRoute() {
           label: module.label,
           href,
           disabled: !hasAccess || !href,
-          active: module.key === "crm",
+          active: module.key === "admin",
           comingSoon: module.coming_soon
         };
       })
-      .filter((item): item is CrmTopModuleItem => Boolean(item));
+      .filter((item): item is AdminTopModuleItem => Boolean(item));
   }, [navigationQuery.data, resolvedFrontendVersion, session?.permissions]);
 
   if (runtime.isBootstrapping || runtime.status === "loading") {
-    return <BusyState label="Loading CRM..." />;
+    return <BusyState label="Loading Admin..." />;
   }
 
   if (!isAuthenticated || !session || !resolvedFrontendVersion) {
@@ -233,11 +234,11 @@ function VersionedCrmRoute() {
   }
 
   if (!section) {
-    return <Navigate to={`/${resolvedFrontendVersion}/companies${location.search}`} replace />;
+    return <Navigate to={`/${resolvedFrontendVersion}/overview${location.search}`} replace />;
   }
 
   return (
-    <CrmPage
+    <AdminPage
       session={session}
       apiClient={runtime.apiClient}
       modules={modules}
@@ -253,8 +254,8 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<RootRoute />} />
-      <Route path="/:semver" element={<VersionedCrmRoute />} />
-      <Route path="/:semver/*" element={<VersionedCrmRoute />} />
+      <Route path="/:semver" element={<VersionedAdminRoute />} />
+      <Route path="/:semver/*" element={<VersionedAdminRoute />} />
       <Route path="*" element={<RootRoute />} />
     </Routes>
   );

@@ -245,6 +245,7 @@ export function AppRouter() {
       <Route path="/" element={<RootRoute />} />
       <Route path="/login" element={<LoginRoute />} />
       <Route path="/:semver/shell" element={<ShellHomeRoute />} />
+      <Route path="/:semver/shell/*" element={<ShellHomeRoute />} />
       <Route path="/shell" element={<RootRoute />} />
       <Route path="*" element={<RootRoute />} />
     </Routes>

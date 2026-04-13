@@ -11,7 +11,7 @@ import {
 import type { AuthSession } from "@naiton/contracts";
 import { useSession, useSessionStatus, useSessionStore, useToast } from "@naiton/ui-kit";
 
-import { createSalesApiClient } from "../shared/api/client";
+import { createAdminApiClient } from "../shared/api/client";
 import { getRuntimeApiOrigin } from "../shared/config/runtime";
 import {
   resolveFrontendRouteVersion,
@@ -40,10 +40,10 @@ const mapErrorToMessage = (error: unknown): string => {
     return error.message;
   }
 
-  return "Could not initialize Sales session";
+  return "Could not initialize Admin session";
 };
 
-interface SalesRuntimeContextValue {
+interface AdminRuntimeContextValue {
   session: AuthSession | null;
   status: "loading" | "authenticated" | "anonymous";
   isBootstrapping: boolean;
@@ -51,11 +51,11 @@ interface SalesRuntimeContextValue {
   authToken: string | null;
   resolvedFrontendVersion: string | null;
   frontendResolution: FrontendRouteVersionResolution | null;
-  apiClient: ReturnType<typeof createSalesApiClient>;
+  apiClient: ReturnType<typeof createAdminApiClient>;
   retryBootstrap: () => void;
 }
 
-const SalesRuntimeContext = createContext<SalesRuntimeContextValue | null>(null);
+const AdminRuntimeContext = createContext<AdminRuntimeContextValue | null>(null);
 
 const normalizeSessionForResolvedVersions = (
   session: AuthSession,
@@ -69,7 +69,7 @@ const normalizeSessionForResolvedVersions = (
   };
 };
 
-export function SalesRuntimeProvider({ children }: PropsWithChildren) {
+export function AdminRuntimeProvider({ children }: PropsWithChildren) {
   const session = useSession();
   const status = useSessionStatus();
   const { pushToast } = useToast();
@@ -82,7 +82,7 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
 
   const anonymousClient = useMemo(
     () =>
-      createSalesApiClient(undefined, {
+      createAdminApiClient(undefined, {
         apiOrigin,
         backendVersion: FALLBACK_BACKEND_VERSION,
         latestBackendVersion: FALLBACK_BACKEND_VERSION,
@@ -91,7 +91,7 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
     [apiOrigin]
   );
 
-  const [apiClient, setApiClient] = useState<ReturnType<typeof createSalesApiClient>>(anonymousClient);
+  const [apiClient, setApiClient] = useState<ReturnType<typeof createAdminApiClient>>(anonymousClient);
   const [authToken, setAuthToken] = useState<string | null>(null);
   const [frontendResolution, setFrontendResolution] = useState<FrontendRouteVersionResolution | null>(null);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
@@ -107,7 +107,7 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
     lastToastErrorRef.current = bootstrapError;
     pushToast({
       tone: "error",
-      title: "Sales bootstrap error",
+      title: "Admin bootstrap error",
       description: bootstrapError
     });
   }, [bootstrapError, pushToast]);
@@ -120,7 +120,7 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
         deployedFrontendVersions: nextSession.deployed_frontend_versions
       });
 
-      const authedClient = createSalesApiClient(nextSession, {
+      const authedClient = createAdminApiClient(nextSession, {
         apiOrigin,
         authToken: token,
         backendVersion: nextSession.backend_version,
@@ -182,7 +182,7 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
 
         if (stored) {
           try {
-            const restoredClient = createSalesApiClient(stored.session, {
+            const restoredClient = createAdminApiClient(stored.session, {
               apiOrigin,
               authToken: stored.token,
               backendVersion: stored.session.backend_version,
@@ -201,13 +201,13 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
           }
         }
 
-        const developmentClient = createSalesApiClient(undefined, { apiOrigin });
+        const developmentClient = createAdminApiClient(undefined, { apiOrigin });
         const loginResponse = await developmentClient.login({
           username: readBootstrapCredential("VITE_NAITON_DEV_USERNAME", "owner@naiton.com"),
           password: readBootstrapCredential("VITE_NAITON_DEV_PASSWORD", "naiton123")
         });
 
-        const authenticatedClient = createSalesApiClient(loginResponse.session, {
+        const authenticatedClient = createAdminApiClient(loginResponse.session, {
           apiOrigin,
           authToken: loginResponse.token,
           backendVersion: loginResponse.session.backend_version,
@@ -239,7 +239,7 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
     };
   }, [apiOrigin, applyAuthenticatedState, bootstrapNonce, resetToAnonymous, setStatus]);
 
-  const value = useMemo<SalesRuntimeContextValue>(
+  const value = useMemo<AdminRuntimeContextValue>(
     () => ({
       session,
       status,
@@ -263,13 +263,13 @@ export function SalesRuntimeProvider({ children }: PropsWithChildren) {
     ]
   );
 
-  return <SalesRuntimeContext.Provider value={value}>{children}</SalesRuntimeContext.Provider>;
+  return <AdminRuntimeContext.Provider value={value}>{children}</AdminRuntimeContext.Provider>;
 }
 
-export const useSalesRuntime = (): SalesRuntimeContextValue => {
-  const context = useContext(SalesRuntimeContext);
+export const useAdminRuntime = (): AdminRuntimeContextValue => {
+  const context = useContext(AdminRuntimeContext);
   if (!context) {
-    throw new Error("useSalesRuntime must be used inside SalesRuntimeProvider");
+    throw new Error("useAdminRuntime must be used inside AdminRuntimeProvider");
   }
 
   return context;
