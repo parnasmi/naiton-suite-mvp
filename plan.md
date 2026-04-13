@@ -232,10 +232,29 @@ All endpoints below are relative to a runtime-resolved, versioned backend base U
 
 ## 6. Phase 6 - CRM App
 
-- [ ] Build the Companies screen with left rail, search/filter toolbar, dense enterprise table, and `New company` action.
-- [ ] Map all visible columns to stable contract fields, including relations, account manager, tax number, and geography/business labels.
-- [ ] Keep toolbar behavior aligned with Sales through shared components and shared query conventions.
-- [ ] Preserve the screenshot navigation model even where labels are placeholders pending later product naming.
+- [x] Build the Companies screen with left rail, search/filter toolbar, dense enterprise table, and `New company` action.
+- [x] Map all visible columns to stable contract fields, including relations, account manager, tax number, and geography/business labels.
+- [x] Keep toolbar behavior aligned with Sales through shared components and shared query conventions.
+- [x] Preserve the screenshot navigation model even where labels are placeholders pending later product naming.
+
+### Files changed
+
+- `apps/crm/package.json` - replaced placeholder scripts with real Vite/React scripts and added CRM app dependencies.
+- `apps/crm/tsconfig.json` - added app-level TypeScript configuration with FSD aliases and Vite client typings.
+- `apps/crm/vite.config.ts` - added CRM Vite config with fixed `CRM_PORT` and env passthrough.
+- `apps/crm/index.html` - added CRM app HTML entrypoint.
+- `apps/crm/src/main.tsx` - added CRM bootstrap wiring (`PlatformProviders`, router, runtime provider, and shared tokens/styles).
+- `apps/crm/src/app/App.tsx` - added top-level CRM app composition with router and command palette shell.
+- `apps/crm/src/app/router.tsx` - implemented bootstrap/guarded routes, semver path correction, top-nav module mapping, and reserved CRM subsection route handling.
+- `apps/crm/src/app/runtime-provider.tsx` - implemented CRM session bootstrap (restore or seeded dev login), runtime frontend/backend version resolution, and persisted auth state.
+- `apps/crm/src/app/app.css` - added screenshot-oriented CRM layout styles (teal top bar, left rail, toolbar strip, dense grid shell, responsive behavior).
+- `apps/crm/src/pages/crm-page.tsx` - implemented Companies screen UI, reserved subsection placeholders, and API-wired table/filter/pagination behavior.
+- `apps/crm/src/shared/api/client.ts` - extended typed CRM client wrapper with auth/session/navigation methods and optional runtime backend version inputs.
+- `apps/crm/src/shared/config/runtime.ts` - added runtime API-origin and module host/port resolution helpers for CRM host-aware links.
+- `apps/crm/src/shared/lib/frontend-version.ts` - added frontend semver resolution with fallback-to-latest behavior.
+- `apps/crm/src/shared/lib/navigation.ts` - added host-aware module URL builder that preserves resolved `{semver}` route segments.
+- `apps/crm/src/shared/lib/session-storage.ts` - added localStorage-backed CRM auth/session persistence with Shell-key fallback parsing.
+- `pnpm-lock.yaml` - refreshed lock metadata after Phase 6 workspace/package updates.
 
 ## 7. Phase 7 - FMS App
 

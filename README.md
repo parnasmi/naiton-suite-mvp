@@ -6,7 +6,7 @@ The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, an
 
 ## Current Status
 
-Phase 1, Phase 2, Phase 3, Phase 4, and Phase 5 are completed:
+Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, and Phase 6 are completed:
 - Monorepo foundation and package topology are in place.
 - Shared platform packages are implemented:
   - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
@@ -15,7 +15,8 @@ Phase 1, Phase 2, Phase 3, Phase 4, and Phase 5 are completed:
 - `apps/api-mock` is fully implemented with version-aware routing, seeded fixtures, auth/session handling, list-query parsing, and contract smoke tests.
 - `apps/shell` is now a real Vite/React app with login, session restore, guarded routing, runtime semver fallback resolution, host-aware module links, and a screenshot-matching dashboard shell.
 - `apps/sales` is now a real Vite/React app with a screenshot-oriented Orders screen, reserved Sales subsection routes, and typed query wiring (search/sort/page size/filters).
-- `apps/crm`, `apps/fms`, and `apps/admin` remain placeholders for later phases.
+- `apps/crm` is now a real Vite/React app with a screenshot-oriented Companies screen, reserved CRM subsection routes, and typed query wiring (search/sort/page size/filters).
+- `apps/fms` and `apps/admin` remain placeholders for later phases.
 
 ## Tech Stack
 
@@ -83,9 +84,9 @@ pnpm typecheck
 pnpm test
 ```
 
-These run through Turborepo. `@naiton/shell`, `@naiton/sales`, and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
+These run through Turborepo. `@naiton/shell`, `@naiton/sales`, `@naiton/crm`, and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
 
-## Run Phase 5 Locally
+## Run Phase 6 Locally
 
 Start mock API:
 
@@ -103,6 +104,12 @@ Start Sales app:
 
 ```bash
 pnpm --filter @naiton/sales dev
+```
+
+Start CRM app:
+
+```bash
+pnpm --filter @naiton/crm dev
 ```
 
 Default login users from seed fixtures:
@@ -144,6 +151,32 @@ Default login users from seed fixtures:
 - Table behavior reuses `@naiton/ui-kit` `DataGrid` with controlled/manual sorting support for server-driven sort queries.
 - On bootstrap, Sales restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
+## Phase 6 CRM Behavior
+
+- CRM app renders the supplied Companies layout with:
+  - shared top nav
+  - left CRM subsection rail
+  - search/filter toolbar
+  - dense enterprise companies data grid
+  - primary `New company` CTA
+- Reserved route space exists for future subsections:
+  - `/{semver}/` and `/{semver}/companies` (implemented Companies screen)
+  - `/{semver}/contacts`, `/{semver}/pipeline`, and `/{semver}/labels` (reserved placeholders)
+- Companies list query is wired to typed API client params:
+  - `search`
+  - `sort`
+  - `pageSize`
+  - `relationship` filter
+  - `active` filter
+- Visible Companies columns map stable contract fields:
+  - relation (`relationship_type`)
+  - account manager (`account_manager`)
+  - tax number (`tax_number`)
+  - geography labels (`country`, `city`)
+  - business label (`industry`)
+- Toolbar and table behavior reuse `@naiton/ui-kit` (`SearchInput` + `DataGrid`) and shared list query conventions aligned with Sales.
+- On bootstrap, CRM restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
+
 ## Mock API Surface
 
 - `POST /api/auth/login`
@@ -174,9 +207,8 @@ Defined in `.env.example`:
 
 ## Roadmap Snapshot
 
-1. Phase 6: CRM companies screen.
-2. Phase 7: FMS fleet + map screen.
-3. Phase 8: Admin dashboard + polish + CI-ready checks.
+1. Phase 7: FMS fleet + map screen.
+2. Phase 8: Admin dashboard + polish + CI-ready checks.
 
 ---
 
