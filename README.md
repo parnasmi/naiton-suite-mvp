@@ -6,23 +6,24 @@ The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, an
 
 ## Current Status
 
-Phase 1, Phase 2, and Phase 3 are completed:
+Phase 1, Phase 2, Phase 3, and Phase 4 are completed:
 - Monorepo foundation and package topology are in place.
 - Shared platform packages are implemented:
   - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
   - `@naiton/search-engine` (command palette provider, registry hooks, shell)
   - `@naiton/ui-kit` (Tailwind v4 tokens, shared chrome/primitives, provider stack)
-- `apps/api-mock` is now fully scaffolded with version-aware routing, seeded fixtures, auth/session handling, stable list-query parsing, and contract smoke tests.
-- Frontend UI apps are still placeholder runners for UI implementation (Phase 4+), but now include typed runtime API wrappers in `src/shared/api/client.ts`.
+- `apps/api-mock` is fully implemented with version-aware routing, seeded fixtures, auth/session handling, list-query parsing, and contract smoke tests.
+- `apps/shell` is now a real Vite/React app with login, session restore, guarded routing, runtime semver fallback resolution, host-aware module links, and a screenshot-matching dashboard shell.
+- `apps/sales`, `apps/crm`, `apps/fms`, and `apps/admin` are still placeholders for Phase 5+ UI implementation.
 
 ## Tech Stack
 
 - `pnpm` + `Turborepo`
 - `TypeScript`
+- `React` + `Vite` + `React Router`
 - `Express` + `cors` (mock API)
-- Shared platform libraries in use:
+- Shared platform libraries:
   - `zod`
-  - `react`
   - `@tanstack/react-query`
   - `zustand`
   - `@tanstack/react-table`
@@ -81,31 +82,42 @@ pnpm typecheck
 pnpm test
 ```
 
-These run through Turborepo. `@naiton/api-mock` now runs real TypeScript and smoke tests; frontend app workspaces keep placeholder scripts until UI phases begin.
+These run through Turborepo. `@naiton/shell` and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
 
-## Phase 3 Mock API
+## Run Phase 4 Locally
 
-Run only the mock API:
+Start mock API:
 
 ```bash
 pnpm --filter @naiton/api-mock dev
 ```
 
-Key implementation details:
-- Version-aware API mounts:
-  - `/api/...` (latest backend version alias)
-  - `/{backend_semver}/api/...` (version-explicit)
-- Auth/profile payloads include:
-  - `frontend_version`
-  - `latest_frontend_version`
-  - `backend_version`
-  - `latest_backend_version`
-- List endpoints support stable query params:
-  - `page`, `pageSize`, `search`, `sort`
-  - screen filters (`status`, `manager`, `relationship`, `active`, `ignition`)
-- Shared runtime resolver in `@naiton/contracts/runtime-api` drives backend version fallback behavior.
+Start shell app:
 
-## Implemented Mock API Surface
+```bash
+pnpm --filter @naiton/shell dev
+```
+
+Default login users from seed fixtures:
+- `owner@naiton.com` / `naiton123`
+- `manager@naiton.com` / `naiton123`
+- `operator@naiton.com` / `naiton123`
+
+## Phase 4 Shell Behavior
+
+- Login screen matches supplied structure (brand panel, language selector, cookie settings stub, terms/privacy links).
+- Session lifecycle is wired end-to-end:
+  - login
+  - logout
+  - session restore from local storage + `GET /auth/me`
+  - guarded navigation
+- Runtime frontend route version is resolved from profile payload with fallback to `latest_frontend_version`.
+- Runtime backend API base URL is resolved from profile payload with fallback to `latest_backend_version`.
+- Host-aware module links preserve the resolved semver route segment.
+- Post-login shell dashboard includes shared top nav/search, notification/profile controls, chart placeholders, activity panel, and command palette (`Ctrl/Cmd+K`).
+- Disabled/coming-soon modules remain visible and non-clickable.
+
+## Mock API Surface
 
 - `POST /api/auth/login`
 - `POST /api/auth/logout`
@@ -122,29 +134,6 @@ Key implementation details:
 - `GET /api/fms/map-markers`
 - `GET /api/admin/overview`
 
-## Frontend Typed API Wrappers (Phase 3)
-
-Each frontend workspace now has `src/shared/api/client.ts` that wraps shared typed clients and runtime backend base URL resolution:
-- `apps/shell/src/shared/api/client.ts`
-- `apps/sales/src/shared/api/client.ts`
-- `apps/crm/src/shared/api/client.ts`
-- `apps/fms/src/shared/api/client.ts`
-- `apps/admin/src/shared/api/client.ts`
-
-All wrappers use:
-- `@naiton/contracts/client` (`createNaitonApiClient`)
-- `@naiton/contracts/runtime-api` (`resolveRuntimeApiBase` fallback behavior)
-
-## Contract Smoke Tests
-
-Run Phase 3 smoke tests:
-
-```bash
-pnpm --filter @naiton/api-mock test
-```
-
-Smoke coverage validates that seeded/auth/list/search payloads conform to shared `@naiton/contracts` schemas and that backend version fallback resolution behaves as expected.
-
 ## Environment Variables
 
 Defined in `.env.example`:
@@ -158,11 +147,10 @@ Defined in `.env.example`:
 
 ## Roadmap Snapshot
 
-1. Phase 4: shell app (auth + dashboard).
-2. Phase 5: Sales app orders screen.
-3. Phase 6: CRM companies screen.
-4. Phase 7: FMS fleet + map screen.
-5. Phase 8: Admin dashboard + polish + CI-ready checks.
+1. Phase 5: Sales app orders screen.
+2. Phase 6: CRM companies screen.
+3. Phase 7: FMS fleet + map screen.
+4. Phase 8: Admin dashboard + polish + CI-ready checks.
 
 ---
 
