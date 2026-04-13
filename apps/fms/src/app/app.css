@@ -1,0 +1,719 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+  font-family: var(--font-sans);
+  color: #1f2937;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+.fms-busy-state {
+  min-height: 100vh;
+  display: grid;
+  place-content: center;
+  gap: 0.8rem;
+  text-align: center;
+  background: #f3f6fa;
+  color: #475569;
+}
+
+.fms-busy-state h1,
+.fms-busy-state p {
+  margin: 0;
+}
+
+.fms-busy-spinner {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  border: 0.24rem solid #dbe4ef;
+  border-top-color: #0f766e;
+  margin: 0 auto;
+  animation: fms-spin 1s linear infinite;
+}
+
+@keyframes fms-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fms-retry-button {
+  height: 2.2rem;
+  padding: 0 0.9rem;
+  border-radius: 0.45rem;
+  border: 1px solid #0f766e;
+  background: #0f766e;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.fms-page {
+  min-height: 100vh;
+  background: #eef2f6;
+}
+
+.fms-topbar {
+  height: 3.7rem;
+  background: #0f766e;
+  color: white;
+  display: grid;
+  grid-template-columns: auto minmax(200px, 300px) 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0 0.85rem;
+}
+
+.fms-brand {
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fms-brand-mark {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+}
+
+.fms-brand strong {
+  display: block;
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.fms-brand small {
+  display: block;
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fms-top-search .naiton-control {
+  height: 2.2rem;
+  min-width: 180px;
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.fms-top-search .naiton-control input,
+.fms-top-search .naiton-control span,
+.fms-top-search .naiton-control kbd {
+  color: white;
+}
+
+.fms-top-search .naiton-control kbd {
+  display: none;
+}
+
+.fms-top-modules {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.fms-top-modules::-webkit-scrollbar {
+  display: none;
+}
+
+.fms-top-modules a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.86);
+  font-size: 0.91rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.45rem;
+  white-space: nowrap;
+}
+
+.fms-top-modules a:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fms-top-modules a.is-active {
+  color: white;
+  font-weight: 700;
+}
+
+.fms-coming-soon {
+  margin-left: 0.3rem;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  padding: 0.08rem 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+}
+
+.fms-top-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+}
+
+.fms-icon-button {
+  height: 2rem;
+  min-width: 2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.33);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  cursor: pointer;
+  position: relative;
+}
+
+.fms-count-dot {
+  position: absolute;
+  top: -0.2rem;
+  right: -0.25rem;
+  min-width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  background: #f97316;
+  color: white;
+  font-size: 0.62rem;
+  display: grid;
+  place-items: center;
+  padding: 0 0.2rem;
+}
+
+.fms-profile-pill {
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.24rem 0.6rem;
+  min-width: 130px;
+}
+
+.fms-profile-pill span,
+.fms-profile-pill small {
+  display: block;
+  line-height: 1.2;
+}
+
+.fms-profile-pill span {
+  font-size: 0.82rem;
+}
+
+.fms-profile-pill small {
+  font-size: 0.72rem;
+  opacity: 0.9;
+  text-transform: capitalize;
+}
+
+.fms-body {
+  display: grid;
+  grid-template-columns: 58px 1fr;
+  min-height: calc(100vh - 3.7rem);
+}
+
+.fms-side-rail {
+  background: #475569;
+  border-right: 1px solid #3d4b5d;
+  display: grid;
+  align-content: start;
+  gap: 0.22rem;
+  padding-top: 0.45rem;
+}
+
+.fms-side-rail a {
+  text-decoration: none;
+  color: #d8dee6;
+  font-size: 0.64rem;
+  text-align: center;
+  padding: 0.75rem 0.2rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.fms-side-rail a::before {
+  content: "[]";
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.fms-side-rail a.is-active,
+.fms-side-rail a:hover {
+  background: #3d4b5d;
+  color: white;
+}
+
+.fms-main {
+  min-width: 0;
+  padding: 0.7rem;
+}
+
+.fms-surface {
+  background: #f7f9fb;
+  border: 1px solid #dde4ed;
+  border-radius: 0.35rem;
+  padding: 0.65rem;
+}
+
+.fms-surface h2,
+.fms-surface p {
+  margin: 0;
+}
+
+.fms-fleet-surface {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.fms-fleet-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.6rem;
+}
+
+.fms-toolbar-left,
+.fms-toolbar-right {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.fms-fleet-toolbar h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  color: #1f2937;
+}
+
+.fms-fleet-toolbar .naiton-control {
+  height: 2rem;
+  min-width: 180px;
+  border-radius: 0.35rem;
+}
+
+.fms-fleet-toolbar .naiton-control kbd {
+  display: none;
+}
+
+.fms-filter-button,
+.fms-ghost-button {
+  height: 2rem;
+  border-radius: 0.35rem;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #475569;
+  padding: 0 0.7rem;
+  cursor: pointer;
+}
+
+.fms-select,
+.fms-rows-control select {
+  height: 2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  background: white;
+  color: #334155;
+  padding: 0 0.55rem;
+}
+
+.fms-toggle-label,
+.fms-rows-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.fms-fleet-layout {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  gap: 0.6rem;
+  min-height: calc(100vh - 9.4rem);
+}
+
+.fms-vehicle-list-panel,
+.fms-map-panel {
+  border: 1px solid #d8e1eb;
+  background: white;
+  border-radius: 0.45rem;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.fms-vehicle-list-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+}
+
+.fms-vehicle-list-panel header {
+  padding: 0.62rem 0.72rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.fms-vehicle-list-panel h2 {
+  font-size: 1rem;
+}
+
+.fms-vehicle-list-panel p {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.fms-vehicle-list {
+  overflow: auto;
+  padding: 0.4rem;
+  display: grid;
+  gap: 0.38rem;
+}
+
+.fms-vehicle-item {
+  border: 1px solid #dbe4ee;
+  border-radius: 0.4rem;
+  background: #f8fafc;
+  text-align: left;
+  padding: 0.5rem 0.55rem;
+  cursor: pointer;
+  display: grid;
+  gap: 0.34rem;
+}
+
+.fms-vehicle-item:hover {
+  border-color: #a7b5c7;
+}
+
+.fms-vehicle-item.is-selected {
+  border-color: #0f766e;
+  box-shadow: inset 0 0 0 1px rgba(15, 118, 110, 0.24);
+  background: #ecfeff;
+}
+
+.fms-vehicle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.fms-vehicle-row strong {
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.fms-status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.28rem;
+  border-radius: 999px;
+  padding: 0.13rem 0.46rem;
+  border: 1px solid #d1d5db;
+  font-size: 0.73rem;
+  color: #334155;
+  background: #f8fafc;
+}
+
+.fms-status-dot {
+  width: 0.43rem;
+  height: 0.43rem;
+  border-radius: 999px;
+  background: #94a3b8;
+}
+
+.fms-status-chip.is-online {
+  border-color: #8fe5c2;
+  background: #ecfdf5;
+  color: #166534;
+}
+
+.fms-status-chip.is-online .fms-status-dot {
+  background: #10b981;
+}
+
+.fms-status-chip.is-idle {
+  border-color: #bfdbfe;
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.fms-status-chip.is-idle .fms-status-dot {
+  background: #3b82f6;
+}
+
+.fms-status-chip.is-offline {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.fms-status-chip.is-offline .fms-status-dot {
+  background: #64748b;
+}
+
+.fms-status-chip.is-maintenance {
+  border-color: #fde68a;
+  background: #fefce8;
+  color: #92400e;
+}
+
+.fms-status-chip.is-maintenance .fms-status-dot {
+  background: #f59e0b;
+}
+
+.fms-status-chip.is-alert {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.fms-status-chip.is-alert .fms-status-dot {
+  background: #ef4444;
+}
+
+.fms-vehicle-item p {
+  margin: 0;
+  color: #475569;
+  font-size: 0.82rem;
+}
+
+.fms-telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.22rem 0.5rem;
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.fms-list-empty {
+  margin: 0;
+  padding: 1rem 0.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.84rem;
+}
+
+.fms-vehicle-footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 0.48rem 0.62rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.fms-pagination {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.fms-pagination button {
+  height: 1.85rem;
+  border: 1px solid #cbd5e1;
+  background: white;
+  color: #334155;
+  border-radius: 0.35rem;
+  padding: 0 0.62rem;
+  cursor: pointer;
+}
+
+.fms-pagination button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.fms-vehicle-footer small {
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.fms-map-panel {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.fms-map-header {
+  padding: 0.62rem 0.72rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.fms-map-header h2 {
+  font-size: 1rem;
+}
+
+.fms-map-header p {
+  margin-top: 0.22rem;
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+.fms-map-shell {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+}
+
+.fms-map-canvas {
+  height: 100%;
+  min-height: 560px;
+}
+
+.fms-map-controls {
+  position: absolute;
+  z-index: 410;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.fms-map-controls-left {
+  top: 0.6rem;
+  left: 0.6rem;
+}
+
+.fms-map-controls-right {
+  top: 0.6rem;
+  right: 0.6rem;
+  justify-items: end;
+}
+
+.fms-map-controls button,
+.fms-layer-picker select {
+  height: 2rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.35rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #334155;
+  padding: 0 0.62rem;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.1);
+}
+
+.fms-map-controls button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.fms-map-controls button.is-active {
+  border-color: #0f766e;
+  color: #0f766e;
+  font-weight: 600;
+}
+
+.fms-layer-picker {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.72rem;
+  color: #334155;
+  text-align: left;
+}
+
+.fms-cluster-pin {
+  background: transparent;
+  border: 0;
+}
+
+.fms-cluster-pin span {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  background: #0f766e;
+  box-shadow: 0 10px 18px rgba(15, 118, 110, 0.35);
+}
+
+.fms-error {
+  margin: 0;
+  border-radius: 0.35rem;
+  border: 1px solid #ef4444;
+  background: #fee2e2;
+  color: #991b1b;
+  padding: 0.42rem 0.5rem;
+  font-size: 0.83rem;
+}
+
+@media (max-width: 1400px) {
+  .fms-fleet-layout {
+    grid-template-columns: 300px 1fr;
+  }
+}
+
+@media (max-width: 1280px) {
+  .fms-topbar {
+    grid-template-columns: auto minmax(180px, 260px) 1fr;
+    height: auto;
+    padding: 0.6rem 0.75rem;
+  }
+
+  .fms-top-actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .fms-fleet-layout {
+    min-height: calc(100vh - 11.2rem);
+  }
+}
+
+@media (max-width: 1020px) {
+  .fms-fleet-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .fms-map-canvas {
+    min-height: 460px;
+  }
+
+  .fms-vehicle-list-panel {
+    max-height: 360px;
+  }
+}
+
+@media (max-width: 900px) {
+  .fms-body {
+    grid-template-columns: 1fr;
+  }
+
+  .fms-side-rail {
+    grid-auto-flow: column;
+    justify-content: start;
+    align-items: stretch;
+    overflow-x: auto;
+    padding: 0.35rem;
+  }
+
+  .fms-side-rail a {
+    min-width: 110px;
+    font-size: 0.75rem;
+    border-radius: 0.35rem;
+  }
+
+  .fms-side-rail a::before {
+    font-size: 0.85rem;
+  }
+
+  .fms-map-controls-right {
+    width: calc(100% - 1.2rem);
+    justify-items: stretch;
+  }
+}

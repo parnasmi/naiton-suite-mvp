@@ -6,7 +6,7 @@ The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, an
 
 ## Current Status
 
-Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, and Phase 6 are completed:
+Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, and Phase 7 are completed:
 - Monorepo foundation and package topology are in place.
 - Shared platform packages are implemented:
   - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
@@ -16,7 +16,8 @@ Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, and Phase 6 are completed:
 - `apps/shell` is now a real Vite/React app with login, session restore, guarded routing, runtime semver fallback resolution, host-aware module links, and a screenshot-matching dashboard shell.
 - `apps/sales` is now a real Vite/React app with a screenshot-oriented Orders screen, reserved Sales subsection routes, and typed query wiring (search/sort/page size/filters).
 - `apps/crm` is now a real Vite/React app with a screenshot-oriented Companies screen, reserved CRM subsection routes, and typed query wiring (search/sort/page size/filters).
-- `apps/fms` and `apps/admin` remain placeholders for later phases.
+- `apps/fms` is now a real Vite/React app with a screenshot-oriented Fleet map screen, reserved FMS subsection routes, and typed query wiring (search/sort/page size/filters).
+- `apps/admin` remains a placeholder for the next phase.
 
 ## Tech Stack
 
@@ -84,9 +85,9 @@ pnpm typecheck
 pnpm test
 ```
 
-These run through Turborepo. `@naiton/shell`, `@naiton/sales`, `@naiton/crm`, and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
+These run through Turborepo. `@naiton/shell`, `@naiton/sales`, `@naiton/crm`, `@naiton/fms`, and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
 
-## Run Phase 6 Locally
+## Run Phase 7 Locally
 
 Start mock API:
 
@@ -110,6 +111,12 @@ Start CRM app:
 
 ```bash
 pnpm --filter @naiton/crm dev
+```
+
+Start FMS app:
+
+```bash
+pnpm --filter @naiton/fms dev
 ```
 
 Default login users from seed fixtures:
@@ -177,6 +184,36 @@ Default login users from seed fixtures:
 - Toolbar and table behavior reuse `@naiton/ui-kit` (`SearchInput` + `DataGrid`) and shared list query conventions aligned with Sales.
 - On bootstrap, CRM restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
+## Phase 7 FMS Behavior
+
+- FMS app renders the supplied fleet layout with:
+  - shared top nav
+  - left FMS subsection rail
+  - searchable/filterable left vehicle list
+  - status markers and telemetry snippets per vehicle
+  - full-height map canvas
+- Reserved route space exists for future subsections:
+  - `/{semver}/` and `/{semver}/fleet` (implemented Fleet screen)
+  - `/{semver}/trips`, `/{semver}/service`, and `/{semver}/zones` (reserved placeholders)
+- Fleet list query is wired to typed API client params:
+  - `search`
+  - `sort`
+  - `pageSize`
+  - `status` filter
+  - `ignition` filter
+- Map implementation uses `Leaflet` with OpenStreetMap tiles and clustered mock markers.
+- Selection sync is wired both directions:
+  - selecting a vehicle in the list focuses/highlights it on the map
+  - clicking a map marker selects the corresponding list vehicle
+- Screenshot-style map controls are reproduced with simplified MVP actions:
+  - zoom in/out
+  - fit fleet bounds
+  - focus selected vehicle
+  - OSM layer switcher
+  - follow-selection toggle
+- Lightweight refresh simulation updates vehicle statuses, speeds, timestamps, and coordinates on an interval or manual refresh, without real-time infrastructure.
+- On bootstrap, FMS restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
+
 ## Mock API Surface
 
 - `POST /api/auth/login`
@@ -207,8 +244,7 @@ Defined in `.env.example`:
 
 ## Roadmap Snapshot
 
-1. Phase 7: FMS fleet + map screen.
-2. Phase 8: Admin dashboard + polish + CI-ready checks.
+1. Phase 8: Admin dashboard + polish + CI-ready checks.
 
 ---
 
