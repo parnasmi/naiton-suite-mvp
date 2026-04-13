@@ -258,10 +258,29 @@ All endpoints below are relative to a runtime-resolved, versioned backend base U
 
 ## 7. Phase 7 - FMS App
 
-- [ ] Build the fleet screen with searchable left vehicle list, status markers, telemetry snippets, and a full-height map canvas.
-- [ ] Use Leaflet with OpenStreetMap tiles, clustered mock markers, and selection sync between the list and the map.
-- [ ] Reproduce the screenshot control layout for zoom/layers/actions with simplified MVP behavior.
-- [ ] Add a lightweight refresh simulation so vehicle status and positions can change without introducing real-time infrastructure.
+- [x] Build the fleet screen with searchable left vehicle list, status markers, telemetry snippets, and a full-height map canvas.
+- [x] Use Leaflet with OpenStreetMap tiles, clustered mock markers, and selection sync between the list and the map.
+- [x] Reproduce the screenshot control layout for zoom/layers/actions with simplified MVP behavior.
+- [x] Add a lightweight refresh simulation so vehicle status and positions can change without introducing real-time infrastructure.
+
+### Files changed
+
+- `apps/fms/package.json` - replaced placeholder scripts with real Vite/React scripts and added FMS app dependencies (`leaflet`, React stack, shared workspace packages).
+- `apps/fms/tsconfig.json` - added app-level TypeScript configuration with FSD aliases and Vite client typings.
+- `apps/fms/vite.config.ts` - added FMS Vite config with fixed `FMS_PORT` and env passthrough.
+- `apps/fms/index.html` - added FMS app HTML entrypoint.
+- `apps/fms/src/main.tsx` - added FMS bootstrap wiring (`PlatformProviders`, router, runtime provider, shared tokens/styles, and Leaflet CSS).
+- `apps/fms/src/app/App.tsx` - added top-level FMS app composition with router and command palette shell.
+- `apps/fms/src/app/router.tsx` - implemented bootstrap/guarded routes, semver path correction, top-nav module mapping, and reserved FMS subsection route handling.
+- `apps/fms/src/app/runtime-provider.tsx` - implemented FMS session bootstrap (restore or seeded dev login), runtime frontend/backend version resolution, and persisted auth state.
+- `apps/fms/src/app/app.css` - added screenshot-oriented FMS layout styles (teal top bar, side rail, split list/map layout, map controls, clustered marker visuals, responsive behavior).
+- `apps/fms/src/pages/fms-page.tsx` - implemented Fleet screen UI with searchable list, status/telemetry cards, list-map selection sync, Leaflet map, OSM layers, clustering, and lightweight refresh simulation.
+- `apps/fms/src/shared/api/client.ts` - extended typed FMS client wrapper with auth/session/navigation methods and optional runtime backend version inputs.
+- `apps/fms/src/shared/config/runtime.ts` - added runtime API-origin and module host/port resolution helpers for FMS host-aware links.
+- `apps/fms/src/shared/lib/frontend-version.ts` - added frontend semver resolution with fallback-to-latest behavior.
+- `apps/fms/src/shared/lib/navigation.ts` - added host-aware module URL builder that preserves resolved `{semver}` route segments.
+- `apps/fms/src/shared/lib/session-storage.ts` - added localStorage-backed FMS auth/session persistence with Shell-key fallback parsing.
+- `pnpm-lock.yaml` - refreshed lock metadata after Phase 7 workspace/package updates.
 
 ## 8. Phase 8 - Admin App And Finish Pass
 
