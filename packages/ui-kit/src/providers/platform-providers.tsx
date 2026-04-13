@@ -6,6 +6,7 @@ import type { AuthSession } from "@naiton/contracts";
 
 import { SessionProvider } from "./session-provider";
 import { ThemeProvider, type ThemeMode } from "./theme-provider";
+import { ToastProvider } from "./toast-provider";
 
 export interface PlatformProvidersProps extends PropsWithChildren {
   initialTheme?: ThemeMode;
@@ -38,7 +39,9 @@ export function PlatformProviders({
     <ThemeProvider initialMode={initialTheme}>
       <QueryClientProvider client={client}>
         <SessionProvider initialSession={initialSession}>
-          <SearchProvider>{children}</SearchProvider>
+          <ToastProvider>
+            <SearchProvider>{children}</SearchProvider>
+          </ToastProvider>
         </SessionProvider>
       </QueryClientProvider>
     </ThemeProvider>
