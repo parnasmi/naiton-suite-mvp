@@ -16,10 +16,7 @@ export const createAdminApiClient = (
   options: AdminApiClientOptions = {}
 ) => {
   const backendVersion = options.backendVersion ?? session?.backend_version ?? FALLBACK_BACKEND_VERSION;
-  const latestBackendVersion =
-    options.latestBackendVersion ??
-    session?.latest_backend_version ??
-    backendVersion;
+  const latestBackendVersion = options.latestBackendVersion ?? session?.latest_backend_version ?? backendVersion;
   const deployedBackendVersions = options.deployedBackendVersions ?? session?.deployed_backend_versions ?? [];
 
   const client = createNaitonApiClient({

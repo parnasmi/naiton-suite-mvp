@@ -291,30 +291,35 @@ All endpoints below are relative to a runtime-resolved, versioned backend base U
 
 ### Files changed
 
-- `apps/admin/package.json` - replaced placeholder scripts with real Vite/React scripts and added Admin app dependencies.
-- `apps/admin/tsconfig.json` - added app-level TypeScript configuration with FSD aliases and Vite client typings.
+- `apps/admin/package.json` - replaced placeholder scripts with a real Vite/React runtime and added Admin app dependencies.
+- `apps/admin/tsconfig.json` - added app-level TypeScript config with FSD aliases and Vite client typings.
 - `apps/admin/vite.config.ts` - added Admin Vite config with fixed `ADMIN_PORT` and env passthrough.
 - `apps/admin/index.html` - added Admin app HTML entrypoint.
-- `apps/admin/src/main.tsx` - added Admin bootstrap wiring (`PlatformProviders`, router, runtime provider, and shared tokens/styles).
+- `apps/admin/src/main.tsx` - added Admin bootstrap wiring (`PlatformProviders`, router, runtime provider, shared tokens/styles).
 - `apps/admin/src/app/App.tsx` - added top-level Admin app composition with router and command palette shell.
-- `apps/admin/src/app/router.tsx` - implemented bootstrap/guarded routes, semver path correction, top-nav module mapping, command-palette API search source registration, and reserved Admin subsection route handling.
-- `apps/admin/src/app/runtime-provider.tsx` - implemented Admin session bootstrap (restore or seeded dev login), runtime frontend/backend version resolution, persisted auth state, and bootstrap error toast integration.
-- `apps/admin/src/app/app.css` - added screenshot-oriented Admin layout styles (dark top bar, vertical settings rail, metric/progress dashboard cards, responsive behavior).
-- `apps/admin/src/pages/admin-page.tsx` - implemented Admin overview dashboard UI (ring cards, progress bars, role/module health panels, loading/empty/error states) wired to typed overview data.
-- `apps/admin/src/shared/api/client.ts` - extended typed Admin client wrapper with auth/session/navigation/notifications methods and optional runtime backend version inputs.
+- `apps/admin/src/app/router.tsx` - implemented bootstrap/guarded routes, semver correction, reserved section handling, top-nav mapping, notifications loading, and Admin command-palette source registration.
+- `apps/admin/src/app/runtime-provider.tsx` - implemented Admin session bootstrap (restore or seeded dev login), runtime frontend/backend version resolution, and persisted auth state.
+- `apps/admin/src/app/app.css` - added screenshot-oriented Admin layout styles (green top bar, vertical settings rail, metric cards, progress cards, responsive dashboard behavior).
+- `apps/admin/src/pages/admin-page.tsx` - implemented Admin dashboard UI with typed overview query wiring, ring metrics, progress bars, loading/empty/error states, and section placeholders.
+- `apps/admin/src/shared/api/client.ts` - extended typed Admin client wrapper with auth/session/navigation/notifications/search/overview methods and optional runtime backend version inputs.
 - `apps/admin/src/shared/config/runtime.ts` - added runtime API-origin and module host/port resolution helpers for Admin host-aware links.
 - `apps/admin/src/shared/lib/frontend-version.ts` - added frontend semver resolution with fallback-to-latest behavior.
 - `apps/admin/src/shared/lib/navigation.ts` - added host-aware module URL builder that preserves resolved `{semver}` route segments.
 - `apps/admin/src/shared/lib/session-storage.ts` - added localStorage-backed Admin auth/session persistence with Shell-key fallback parsing.
-- `packages/ui-kit/src/providers/toast-provider.tsx` - added a shared toast provider/hook for global success/warning/error/info notifications.
-- `packages/ui-kit/src/providers/platform-providers.tsx` - wired the new toast provider into the shared platform provider stack for all apps.
-- `packages/ui-kit/src/index.ts` - exported toast provider/hook/types from the UI kit public API.
-- `apps/sales/src/app/router.tsx`, `apps/crm/src/app/router.tsx`, `apps/fms/src/app/router.tsx` - added command-palette API search source registration for consistent cross-app global palette behavior.
-- `apps/sales/src/app/runtime-provider.tsx`, `apps/crm/src/app/runtime-provider.tsx`, `apps/fms/src/app/runtime-provider.tsx` - added bootstrap error toast integration for cross-app loading/error polish.
-- `apps/shell/src/app/router.tsx` - added `/:semver/shell/*` route handling for resilient direct-link refresh behavior.
-- `.github/workflows/ci.yml` - added CI workflow running root `lint`, `typecheck`, `test`, and `build` checks on push/PR.
-- `CONTRIBUTING.md` - added contributor documentation for setup, ports, root commands, and phase handoff rules.
-- `pnpm-lock.yaml` - refreshed lock metadata after Phase 8 workspace/package updates.
+- `packages/ui-kit/src/providers/toast-provider.tsx` - added shared toast provider, hook, and viewport for lightweight cross-app action feedback.
+- `packages/ui-kit/src/providers/platform-providers.tsx` - wired `ToastProvider` into the shared provider stack so all apps get toast support by default.
+- `packages/ui-kit/src/index.ts` - exported toast provider/hook/types through the public UI kit interface.
+- `apps/sales/src/app/router.tsx` - added Sales command-palette search source registration against typed API search.
+- `apps/crm/src/app/router.tsx` - added CRM command-palette search source registration against typed API search.
+- `apps/fms/src/app/router.tsx` - added FMS command-palette search source registration against typed API search.
+- `apps/sales/src/pages/sales-page.tsx` - wired top-search click/focus palette open, added toast feedback for placeholder actions, and kept table loading/empty/error states intact.
+- `apps/crm/src/pages/crm-page.tsx` - wired top-search click/focus palette open, added toast feedback for placeholder actions, and kept table loading/empty/error states intact.
+- `apps/fms/src/pages/fms-page.tsx` - wired top-search click/focus palette open and added toast feedback for placeholder top actions.
+- `apps/shell/src/pages/shell-home-page.tsx` - added toast feedback for shell notifications/settings placeholder interactions.
+- `package.json` - added root `ci:check` command chaining `lint`, `typecheck`, `test`, and `build`.
+- `.github/workflows/ci.yml` - added CI workflow executing install plus lint/typecheck/test/build on push/PR.
+- `README.md` - updated status and docs for completed Phase 8 behavior, local run commands (including Admin), CI checks, and contributor handoff rules.
+- `pnpm-lock.yaml` - refreshed workspace lock metadata after Phase 8 app/package updates.
 
 ## Test Plan
 

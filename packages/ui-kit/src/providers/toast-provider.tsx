@@ -18,191 +18,195 @@ export interface ToastInput {
   durationMs?: number;
 }
 
-interface ToastRecord extends ToastInput {
+export interface ToastRecord {
   id: string;
+  title: string;
+  description?: string;
   tone: ToastTone;
+  durationMs: number;
 }
 
-interface ToastContextValue {
+export interface ToastContextValue {
+  toasts: ToastRecord[];
   pushToast: (toast: ToastInput) => string;
   dismissToast: (id: string) => void;
   clearToasts: () => void;
 }
 
-const ToastContext = createContext<ToastContextValue | null>(null);
+const DEFAULT_DURATION_MS = 3200;
 
-const toneStyleMap: Record<ToastTone, { border: string; background: string; title: string }> = {
+const toastToneStyles: Record<ToastTone, { border: string; background: string; title: string }> = {
   info: {
-    border: "#bfdbfe",
+    border: "#bfd4ff",
     background: "#eff6ff",
-    title: "#1d4ed8"
+    title: "#1e3a8a"
   },
   success: {
-    border: "#86efac",
+    border: "#9ae6b4",
     background: "#ecfdf5",
     title: "#166534"
   },
   warning: {
     border: "#fcd34d",
     background: "#fffbeb",
-    title: "#b45309"
+    title: "#92400e"
   },
   error: {
-    border: "#fecaca",
-    background: "#fef2f2",
-    title: "#b91c1c"
+    border: "#fda4af",
+    background: "#fff1f2",
+    title: "#9f1239"
   }
 };
 
-const createToastId = (): string => {
-  return `toast_${Math.random().toString(36).slice(2, 11)}`;
-};
+const ToastContext = createContext<ToastContextValue | null>(null);
 
-export function ToastProvider({ children }: PropsWithChildren) {
+export interface ToastProviderProps extends PropsWithChildren {
+  maxToasts?: number;
+}
+
+export function ToastProvider({ children, maxToasts = 4 }: ToastProviderProps) {
   const [toasts, setToasts] = useState<ToastRecord[]>([]);
-  const timeoutMapRef = useRef<Map<string, number>>(new Map());
+  const timersRef = useRef<Map<string, number>>(new Map());
 
   const dismissToast = useCallback((id: string) => {
-    const timeoutId = timeoutMapRef.current.get(id);
-    if (timeoutId) {
+    setToasts((previous) => previous.filter((toast) => toast.id !== id));
+
+    const timeoutId = timersRef.current.get(id);
+    if (timeoutId !== undefined) {
       window.clearTimeout(timeoutId);
-      timeoutMapRef.current.delete(id);
+      timersRef.current.delete(id);
     }
-
-    setToasts((current) => current.filter((toast) => toast.id !== id));
-  }, []);
-
-  const clearToasts = useCallback(() => {
-    for (const timeoutId of timeoutMapRef.current.values()) {
-      window.clearTimeout(timeoutId);
-    }
-
-    timeoutMapRef.current.clear();
-    setToasts([]);
   }, []);
 
   const pushToast = useCallback(
     (toast: ToastInput): string => {
-      const id = createToastId();
-      const durationMs = toast.durationMs ?? 3600;
-
+      const id = `toast_${Date.now()}_${Math.random().toString(16).slice(2)}`;
       const nextToast: ToastRecord = {
         id,
         title: toast.title,
         description: toast.description,
         tone: toast.tone ?? "info",
-        durationMs
+        durationMs: Math.max(1000, toast.durationMs ?? DEFAULT_DURATION_MS)
       };
 
-      setToasts((current) => {
-        const next = [...current, nextToast];
-        return next.slice(-4);
+      setToasts((previous) => {
+        const merged = [nextToast, ...previous];
+        return merged.slice(0, Math.max(1, maxToasts));
       });
 
-      if (durationMs > 0 && typeof window !== "undefined") {
-        const timeoutId = window.setTimeout(() => {
-          dismissToast(id);
-        }, durationMs);
+      const timeoutId = window.setTimeout(() => {
+        dismissToast(id);
+      }, nextToast.durationMs);
 
-        timeoutMapRef.current.set(id, timeoutId);
-      }
+      timersRef.current.set(id, timeoutId);
 
       return id;
     },
-    [dismissToast]
+    [dismissToast, maxToasts]
   );
+
+  const clearToasts = useCallback(() => {
+    for (const timeoutId of timersRef.current.values()) {
+      window.clearTimeout(timeoutId);
+    }
+
+    timersRef.current.clear();
+    setToasts([]);
+  }, []);
 
   useEffect(() => {
     return () => {
-      for (const timeoutId of timeoutMapRef.current.values()) {
+      for (const timeoutId of timersRef.current.values()) {
         window.clearTimeout(timeoutId);
       }
-
-      timeoutMapRef.current.clear();
+      timersRef.current.clear();
     };
   }, []);
 
   const value = useMemo<ToastContextValue>(
     () => ({
+      toasts,
       pushToast,
       dismissToast,
       clearToasts
     }),
-    [pushToast, dismissToast, clearToasts]
+    [toasts, pushToast, dismissToast, clearToasts]
   );
 
   return (
     <ToastContext.Provider value={value}>
       {children}
-
-      <div
-        aria-live="polite"
-        aria-atomic="false"
-        style={{
-          position: "fixed",
-          right: "1rem",
-          bottom: "1rem",
-          display: "grid",
-          gap: "0.5rem",
-          width: "min(24rem, calc(100vw - 2rem))",
-          zIndex: 1000,
-          pointerEvents: "none"
-        }}
-      >
-        {toasts.map((toast) => {
-          const toneStyle = toneStyleMap[toast.tone];
-
-          return (
-            <article
-              key={toast.id}
-              style={{
-                pointerEvents: "auto",
-                border: `1px solid ${toneStyle.border}`,
-                background: toneStyle.background,
-                borderRadius: "0.55rem",
-                padding: "0.55rem 0.65rem",
-                boxShadow: "0 10px 24px rgba(15, 23, 42, 0.12)",
-                display: "grid",
-                gridTemplateColumns: "1fr auto",
-                gap: "0.45rem"
-              }}
-            >
-              <div style={{ display: "grid", gap: "0.2rem" }}>
-                <strong style={{ margin: 0, fontSize: "0.88rem", color: toneStyle.title }}>{toast.title}</strong>
-                {toast.description ? (
-                  <p style={{ margin: 0, fontSize: "0.8rem", color: "#334155", lineHeight: 1.35 }}>{toast.description}</p>
-                ) : null}
-              </div>
-
-              <button
-                type="button"
-                aria-label="Dismiss notification"
-                onClick={() => dismissToast(toast.id)}
-                style={{
-                  border: "1px solid #cbd5e1",
-                  background: "white",
-                  borderRadius: "0.35rem",
-                  width: "1.7rem",
-                  height: "1.7rem",
-                  cursor: "pointer",
-                  color: "#475569"
-                }}
-              >
-                x
-              </button>
-            </article>
-          );
-        })}
-      </div>
+      <ToastViewport toasts={toasts} onDismiss={dismissToast} />
     </ToastContext.Provider>
   );
 }
 
-export const useToast = (): ToastContextValue => {
+export const useToasts = (): ToastContextValue => {
   const context = useContext(ToastContext);
   if (!context) {
-    throw new Error("useToast must be used inside ToastProvider");
+    throw new Error("useToasts must be used inside ToastProvider");
   }
 
   return context;
 };
+
+function ToastViewport({ toasts, onDismiss }: { toasts: ToastRecord[]; onDismiss: (id: string) => void }) {
+  if (toasts.length === 0) {
+    return null;
+  }
+
+  return (
+    <div
+      aria-live="polite"
+      aria-atomic="true"
+      style={{
+        position: "fixed",
+        right: "1rem",
+        bottom: "1rem",
+        display: "grid",
+        gap: "0.6rem",
+        zIndex: 9998,
+        width: "min(340px, calc(100vw - 2rem))"
+      }}
+    >
+      {toasts.map((toast) => {
+        const toneStyle = toastToneStyles[toast.tone];
+
+        return (
+          <article
+            key={toast.id}
+            style={{
+              borderRadius: "0.75rem",
+              border: `1px solid ${toneStyle.border}`,
+              background: toneStyle.background,
+              boxShadow: "0 12px 24px -20px rgba(15, 23, 42, 0.8)",
+              padding: "0.65rem 0.72rem",
+              display: "grid",
+              gap: "0.25rem"
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "start", justifyContent: "space-between", gap: "0.5rem" }}>
+              <strong style={{ color: toneStyle.title, fontSize: "0.88rem" }}>{toast.title}</strong>
+              <button
+                type="button"
+                aria-label="Dismiss toast"
+                onClick={() => onDismiss(toast.id)}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  color: "#64748b",
+                  cursor: "pointer",
+                  fontSize: "0.95rem",
+                  lineHeight: 1
+                }}
+              >
+                x
+              </button>
+            </div>
+            {toast.description ? <p style={{ margin: 0, color: "#475569", fontSize: "0.82rem" }}>{toast.description}</p> : null}
+          </article>
+        );
+      })}
+    </div>
+  );
+}

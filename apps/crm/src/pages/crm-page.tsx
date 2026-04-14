@@ -4,6 +4,7 @@ import type { AuthSession, CrmCompany } from "@naiton/contracts";
 import {
   DataGrid,
   SearchInput,
+  useToasts,
   type DataGridProps,
   type DataGridSortingChangeFn,
   type DataGridSortingState
@@ -30,6 +31,7 @@ interface CrmPageProps {
   unreadNotifications: number;
   frontendVersion: string;
   backendVersion: string;
+  onOpenSearch: () => void;
 }
 
 interface CrmCompanyTableRow {
@@ -88,6 +90,7 @@ function CompaniesSection({
   apiClient: ReturnType<typeof createCrmApiClient>;
   backendVersion: string;
 }) {
+  const { pushToast } = useToasts();
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [relationshipFilter, setRelationshipFilter] = useState("");
@@ -343,7 +346,15 @@ function CompaniesSection({
               <option value={200}>200</option>
             </select>
           </label>
-          <button type="button" className="crm-primary-button">
+          <button
+            type="button"
+            className="crm-primary-button"
+            onClick={() =>
+              pushToast({
+                title: "Company creation flow is out of scope for this MVP."
+              })
+            }
+          >
             + New company
           </button>
         </div>
@@ -397,8 +408,11 @@ export function CrmPage({
   section,
   unreadNotifications,
   frontendVersion,
-  backendVersion
+  backendVersion,
+  onOpenSearch
 }: CrmPageProps) {
+  const { pushToast } = useToasts();
+
   return (
     <div className="crm-page">
       <header className="crm-topbar">
@@ -410,8 +424,8 @@ export function CrmPage({
           </span>
         </a>
 
-        <div className="crm-top-search">
-          <SearchInput readOnly value="" placeholder="Search Naiton" hotkeyHint="" />
+        <div className="crm-top-search" onClick={onOpenSearch} onFocus={onOpenSearch}>
+          <SearchInput readOnly value="" placeholder="Search Naiton" hotkeyHint="Ctrl/Cmd+K" />
         </div>
 
         <nav className="crm-top-modules">
@@ -434,16 +448,41 @@ export function CrmPage({
         </nav>
 
         <div className="crm-top-actions">
-          <button type="button" className="crm-icon-button" title="Workspace">
+          <button
+            type="button"
+            className="crm-icon-button"
+            title="Workspace"
+            onClick={() => pushToast({ title: "Workspace tools are planned for a later phase." })}
+          >
             []
           </button>
-          <button type="button" className="crm-icon-button" title="Share">
+          <button
+            type="button"
+            className="crm-icon-button"
+            title="Share"
+            onClick={() => pushToast({ title: "Share flow is not implemented in the MVP yet." })}
+          >
             S
           </button>
-          <button type="button" className="crm-icon-button" title="Help">
+          <button
+            type="button"
+            className="crm-icon-button"
+            title="Help"
+            onClick={() => pushToast({ title: "Help center integration is coming soon." })}
+          >
             ?
           </button>
-          <button type="button" className="crm-icon-button" title="Notifications">
+          <button
+            type="button"
+            className="crm-icon-button"
+            title="Notifications"
+            onClick={() =>
+              pushToast({
+                title: unreadNotifications > 0 ? `${unreadNotifications} unread notifications` : "No unread notifications",
+                tone: unreadNotifications > 0 ? "warning" : "success"
+              })
+            }
+          >
             !
             {unreadNotifications > 0 ? <span className="crm-count-dot">{unreadNotifications}</span> : null}
           </button>

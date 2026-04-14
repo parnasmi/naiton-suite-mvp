@@ -39,9 +39,9 @@ export function PlatformProviders({
     <ThemeProvider initialMode={initialTheme}>
       <QueryClientProvider client={client}>
         <SessionProvider initialSession={initialSession}>
-          <ToastProvider>
-            <SearchProvider>{children}</SearchProvider>
-          </ToastProvider>
+          <SearchProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </SearchProvider>
         </SessionProvider>
       </QueryClientProvider>
     </ThemeProvider>

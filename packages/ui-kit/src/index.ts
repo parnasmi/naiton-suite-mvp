@@ -50,6 +50,13 @@ export {
   type SessionStatus
 } from "./providers/session-provider";
 export { PlatformProviders, type PlatformProvidersProps } from "./providers/platform-providers";
-export { ToastProvider, useToast, type ToastInput, type ToastTone } from "./providers/toast-provider";
+export {
+  ToastProvider,
+  useToasts,
+  type ToastProviderProps,
+  type ToastInput,
+  type ToastTone,
+  type ToastRecord
+} from "./providers/toast-provider";
 
 export { useCommandPalette, useRegisterSearchSource } from "@naiton/search-engine";

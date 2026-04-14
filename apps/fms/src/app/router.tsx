@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { NavModule, NavModuleKey } from "@naiton/contracts";
 import type { SearchSource } from "@naiton/search-engine";
-import { useRegisterSearchSource } from "@naiton/ui-kit";
+import { useCommandPalette, useRegisterSearchSource } from "@naiton/ui-kit";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 import {
@@ -72,8 +72,8 @@ const createSearchSource = ({
 
   return {
     id: "fms-api-search",
-    label: "Naiton",
-    priority: 100,
+    label: "FMS",
+    priority: 95,
     async getItems({ query, signal }) {
       const response = await apiClient.search(query, signal);
 
@@ -147,6 +147,7 @@ function RootRoute() {
 
 function VersionedFmsRoute() {
   const runtime = useFmsRuntime();
+  const commandPalette = useCommandPalette();
   const { semver } = useParams();
   const location = useLocation();
 
@@ -245,6 +246,7 @@ function VersionedFmsRoute() {
       unreadNotifications={(notificationsQuery.data ?? []).filter((item) => !item.read).length}
       frontendVersion={resolvedFrontendVersion}
       backendVersion={runtime.apiClient.resolution.resolvedBackendVersion}
+      onOpenSearch={commandPalette.open}
     />
   );
 }

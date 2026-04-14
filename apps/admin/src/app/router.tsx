@@ -2,20 +2,30 @@ import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { NavModule, NavModuleKey } from "@naiton/contracts";
 import type { SearchSource } from "@naiton/search-engine";
-import { useRegisterSearchSource } from "@naiton/ui-kit";
+import { useCommandPalette, useRegisterSearchSource } from "@naiton/ui-kit";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
-import {
-  AdminPage,
-  type AdminSection,
-  type AdminTopModuleItem
-} from "../pages/admin-page";
+import { AdminPage, type AdminSection, type AdminTopModuleItem } from "../pages/admin-page";
 import { buildModuleHref } from "../shared/lib/navigation";
 import { useAdminRuntime } from "./runtime-provider";
 
 const adminPathForVersion = (frontendVersion: string): string => `/${frontendVersion}/`;
 
-const sectionKeys = new Set<AdminSection>(["overview", "users", "roles", "integrations", "audit"]);
+const sectionKeys = new Set<AdminSection>([
+  "accounting",
+  "logistics",
+  "crm",
+  "hrm",
+  "email",
+  "inventory",
+  "production",
+  "sales",
+  "security",
+  "scripts",
+  "system",
+  "tests",
+  "docs"
+]);
 
 const topModuleOrder: NavModuleKey[] = [
   "sales",
@@ -26,7 +36,6 @@ const topModuleOrder: NavModuleKey[] = [
   "accounting",
   "hrm",
   "fms",
-  "admin",
   "cms"
 ];
 
@@ -39,10 +48,7 @@ const permissionByModule: Partial<Record<NavModuleKey, string>> = {
 
 const isKnownSection = (value: string): value is AdminSection => sectionKeys.has(value as AdminSection);
 
-const canAccessModule = (
-  sessionPermissions: string[],
-  module: NavModule
-): boolean => {
+const canAccessModule = (sessionPermissions: string[], module: NavModule): boolean => {
   if (!module.enabled) {
     return false;
   }
@@ -62,19 +68,14 @@ interface SearchSourceInput {
   frontendVersion: string;
 }
 
-const createSearchSource = ({
-  apiClient,
-  modules,
-  sessionPermissions,
-  frontendVersion
-}: SearchSourceInput): SearchSource => {
+const createSearchSource = ({ apiClient, modules, sessionPermissions, frontendVersion }: SearchSourceInput): SearchSource => {
   const moduleByKey = new Map(modules.map((module) => [module.key, module]));
   const hasWildcard = sessionPermissions.includes("*");
 
   return {
     id: "admin-api-search",
-    label: "Naiton",
-    priority: 100,
+    label: "Admin",
+    priority: 95,
     async getItems({ query, signal }) {
       const response = await apiClient.search(query, signal);
 
@@ -148,6 +149,7 @@ function RootRoute() {
 
 function VersionedAdminRoute() {
   const runtime = useAdminRuntime();
+  const commandPalette = useCommandPalette();
   const { semver } = useParams();
   const location = useLocation();
 
@@ -165,7 +167,7 @@ function VersionedAdminRoute() {
   }, [location.pathname]);
 
   const section = useMemo<AdminSection | null>(() => {
-    const firstSegment = pathSuffix.split("/").filter(Boolean)[0] ?? "overview";
+    const firstSegment = pathSuffix.split("/").filter(Boolean)[0] ?? "accounting";
     return isKnownSection(firstSegment) ? firstSegment : null;
   }, [pathSuffix]);
 
@@ -214,7 +216,7 @@ function VersionedAdminRoute() {
           label: module.label,
           href,
           disabled: !hasAccess || !href,
-          active: module.key === "admin",
+          active: false,
           comingSoon: module.coming_soon
         };
       })
@@ -234,7 +236,7 @@ function VersionedAdminRoute() {
   }
 
   if (!section) {
-    return <Navigate to={`/${resolvedFrontendVersion}/overview${location.search}`} replace />;
+    return <Navigate to={`/${resolvedFrontendVersion}/accounting${location.search}`} replace />;
   }
 
   return (
@@ -246,6 +248,7 @@ function VersionedAdminRoute() {
       unreadNotifications={(notificationsQuery.data ?? []).filter((item) => !item.read).length}
       frontendVersion={resolvedFrontendVersion}
       backendVersion={runtime.apiClient.resolution.resolvedBackendVersion}
+      onOpenSearch={commandPalette.open}
     />
   );
 }

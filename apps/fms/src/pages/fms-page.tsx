@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import L from "leaflet";
 import { useQuery } from "@tanstack/react-query";
 import type { AuthSession, FleetVehicle, MapMarker, VehicleStatus } from "@naiton/contracts";
-import { SearchInput } from "@naiton/ui-kit";
+import { SearchInput, useToasts } from "@naiton/ui-kit";
 
 import { type createFmsApiClient } from "../shared/api/client";
 
@@ -25,6 +25,7 @@ interface FmsPageProps {
   unreadNotifications: number;
   frontendVersion: string;
   backendVersion: string;
+  onOpenSearch: () => void;
 }
 
 interface LiveFleetVehicle extends FleetVehicle {
@@ -797,8 +798,11 @@ export function FmsPage({
   section,
   unreadNotifications,
   frontendVersion,
-  backendVersion
+  backendVersion,
+  onOpenSearch
 }: FmsPageProps) {
+  const { pushToast } = useToasts();
+
   return (
     <div className="fms-page">
       <header className="fms-topbar">
@@ -810,8 +814,8 @@ export function FmsPage({
           </span>
         </a>
 
-        <div className="fms-top-search">
-          <SearchInput readOnly value="" placeholder="Search Naiton" hotkeyHint="" />
+        <div className="fms-top-search" onClick={onOpenSearch} onFocus={onOpenSearch}>
+          <SearchInput readOnly value="" placeholder="Search Naiton" hotkeyHint="Ctrl/Cmd+K" />
         </div>
 
         <nav className="fms-top-modules">
@@ -834,16 +838,41 @@ export function FmsPage({
         </nav>
 
         <div className="fms-top-actions">
-          <button type="button" className="fms-icon-button" title="Workspace">
+          <button
+            type="button"
+            className="fms-icon-button"
+            title="Workspace"
+            onClick={() => pushToast({ title: "Workspace tools are planned for a later phase." })}
+          >
             []
           </button>
-          <button type="button" className="fms-icon-button" title="Share">
+          <button
+            type="button"
+            className="fms-icon-button"
+            title="Share"
+            onClick={() => pushToast({ title: "Share flow is not implemented in the MVP yet." })}
+          >
             S
           </button>
-          <button type="button" className="fms-icon-button" title="Help">
+          <button
+            type="button"
+            className="fms-icon-button"
+            title="Help"
+            onClick={() => pushToast({ title: "Help center integration is coming soon." })}
+          >
             ?
           </button>
-          <button type="button" className="fms-icon-button" title="Notifications">
+          <button
+            type="button"
+            className="fms-icon-button"
+            title="Notifications"
+            onClick={() =>
+              pushToast({
+                title: unreadNotifications > 0 ? `${unreadNotifications} unread notifications` : "No unread notifications",
+                tone: unreadNotifications > 0 ? "warning" : "success"
+              })
+            }
+          >
             !
             {unreadNotifications > 0 ? <span className="fms-count-dot">{unreadNotifications}</span> : null}
           </button>

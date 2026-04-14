@@ -4,12 +4,11 @@ import {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type PropsWithChildren
 } from "react";
 import type { AuthSession } from "@naiton/contracts";
-import { useSession, useSessionStatus, useSessionStore, useToast } from "@naiton/ui-kit";
+import { useSession, useSessionStatus, useSessionStore } from "@naiton/ui-kit";
 
 import { createAdminApiClient } from "../shared/api/client";
 import { getRuntimeApiOrigin } from "../shared/config/runtime";
@@ -72,7 +71,6 @@ const normalizeSessionForResolvedVersions = (
 export function AdminRuntimeProvider({ children }: PropsWithChildren) {
   const session = useSession();
   const status = useSessionStatus();
-  const { pushToast } = useToast();
 
   const setSession = useSessionStore((state) => state.setSession);
   const clearSession = useSessionStore((state) => state.clearSession);
@@ -97,20 +95,6 @@ export function AdminRuntimeProvider({ children }: PropsWithChildren) {
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const [isBootstrapping, setIsBootstrapping] = useState(true);
   const [bootstrapNonce, setBootstrapNonce] = useState(0);
-  const lastToastErrorRef = useRef<string | null>(null);
-
-  useEffect(() => {
-    if (!bootstrapError || bootstrapError === lastToastErrorRef.current) {
-      return;
-    }
-
-    lastToastErrorRef.current = bootstrapError;
-    pushToast({
-      tone: "error",
-      title: "Admin bootstrap error",
-      description: bootstrapError
-    });
-  }, [bootstrapError, pushToast]);
 
   const applyAuthenticatedState = useCallback(
     (nextSession: AuthSession, token: string) => {

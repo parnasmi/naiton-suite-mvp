@@ -1,4 +1,4 @@
-import { SearchInput, SurfaceCard } from "@naiton/ui-kit";
+import { SearchInput, SurfaceCard, useToasts } from "@naiton/ui-kit";
 import type { AuthSession, DashboardSummary } from "@naiton/contracts";
 
 export interface ShellModuleNavItem {
@@ -65,6 +65,7 @@ export function ShellHomePage({
   frontendFallback,
   backendFallback
 }: ShellHomePageProps) {
+  const { pushToast } = useToasts();
   const activities = summary?.activity_feed ?? [];
 
   return (
@@ -104,11 +105,30 @@ export function ShellHomePage({
         </nav>
 
         <div className="shell-actions">
-          <button type="button" className="action-button" title="Notifications">
+          <button
+            type="button"
+            className="action-button"
+            title="Notifications"
+            onClick={() =>
+              pushToast({
+                title: unreadNotifications > 0 ? `${unreadNotifications} unread notifications` : "No unread notifications",
+                tone: unreadNotifications > 0 ? "warning" : "success"
+              })
+            }
+          >
             Notifications
             {unreadNotifications > 0 ? <span className="badge-count">{unreadNotifications}</span> : null}
           </button>
-          <button type="button" className="action-button" title="Settings">
+          <button
+            type="button"
+            className="action-button"
+            title="Settings"
+            onClick={() =>
+              pushToast({
+                title: "Settings panel is not part of the MVP yet."
+              })
+            }
+          >
             Settings
           </button>
           <div className="profile-pill">
