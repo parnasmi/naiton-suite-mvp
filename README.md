@@ -6,7 +6,7 @@ The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, an
 
 ## Current Status
 
-Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7, and Phase 8 are completed:
+Milestones 1 through 8 are completed:
 - Monorepo foundation and package topology are in place.
 - Shared platform packages are implemented:
   - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
@@ -92,7 +92,7 @@ pnpm ci:check
 
 These run through Turborepo. `@naiton/shell`, `@naiton/sales`, `@naiton/crm`, `@naiton/fms`, `@naiton/admin`, and `@naiton/api-mock` now run real build/typecheck flows.
 
-## Run Phase 8 Locally
+## Run Locally
 
 Start mock API:
 
@@ -135,7 +135,7 @@ Default login users from seed fixtures:
 - `manager@naiton.com` / `naiton123`
 - `operator@naiton.com` / `naiton123`
 
-## Phase 4 Shell Behavior
+## Shell Behavior
 
 - Login screen matches supplied structure (brand panel, language selector, cookie settings stub, terms/privacy links).
 - Session lifecycle is wired end-to-end:
@@ -149,7 +149,7 @@ Default login users from seed fixtures:
 - Post-login shell dashboard includes shared top nav/search, notification/profile controls, chart placeholders, activity panel, and command palette (`Ctrl/Cmd+K`).
 - Disabled/coming-soon modules remain visible and non-clickable.
 
-## Phase 5 Sales Behavior
+## Sales Behavior
 
 - Sales app renders the supplied Orders layout with:
   - green shared top nav
@@ -169,7 +169,7 @@ Default login users from seed fixtures:
 - Table behavior reuses `@naiton/ui-kit` `DataGrid` with controlled/manual sorting support for server-driven sort queries.
 - On bootstrap, Sales restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
-## Phase 6 CRM Behavior
+## CRM Behavior
 
 - CRM app renders the supplied Companies layout with:
   - shared top nav
@@ -195,7 +195,7 @@ Default login users from seed fixtures:
 - Toolbar and table behavior reuse `@naiton/ui-kit` (`SearchInput` + `DataGrid`) and shared list query conventions aligned with Sales.
 - On bootstrap, CRM restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
-## Phase 7 FMS Behavior
+## FMS Behavior
 
 - FMS app renders the supplied fleet layout with:
   - shared top nav
@@ -225,7 +225,7 @@ Default login users from seed fixtures:
 - Lightweight refresh simulation updates vehicle statuses, speeds, timestamps, and coordinates on an interval or manual refresh, without real-time infrastructure.
 - On bootstrap, FMS restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
-## Phase 8 Admin And Finish Pass Behavior
+## Admin And Finish Pass Behavior
 
 - Admin app now renders the supplied dashboard direction with:
   - green shared top nav
@@ -246,9 +246,9 @@ Default login users from seed fixtures:
 
 - Keep fixed dev ports and semver route templates from `workspace.config.json`.
 - Use root commands (`dev`, `build`, `lint`, `typecheck`, `test`, `ci:check`) for cross-workspace validation.
-- When a phase is completed:
+- When a milestone is completed:
   - mark checklist items in `plan.md`
-  - fill that phase's `Files changed` list with one-line notes
+  - fill that milestone's `Files changed` list with one-line notes
   - update this `README.md` for status and runtime instructions
   - do not pre-mark `Test Plan` checklist items before manual verification
 
