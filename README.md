@@ -6,7 +6,7 @@ The target is to reproduce the provided Naiton login, shell, Sales, CRM, FMS, an
 
 ## Current Status
 
-Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, and Phase 7 are completed:
+Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, Phase 7, and Phase 8 are completed:
 - Monorepo foundation and package topology are in place.
 - Shared platform packages are implemented:
   - `@naiton/contracts` (`zod` schemas + TypeScript contracts)
@@ -17,7 +17,11 @@ Phase 1, Phase 2, Phase 3, Phase 4, Phase 5, Phase 6, and Phase 7 are completed:
 - `apps/sales` is now a real Vite/React app with a screenshot-oriented Orders screen, reserved Sales subsection routes, and typed query wiring (search/sort/page size/filters).
 - `apps/crm` is now a real Vite/React app with a screenshot-oriented Companies screen, reserved CRM subsection routes, and typed query wiring (search/sort/page size/filters).
 - `apps/fms` is now a real Vite/React app with a screenshot-oriented Fleet map screen, reserved FMS subsection routes, and typed query wiring (search/sort/page size/filters).
-- `apps/admin` remains a placeholder for the next phase.
+- `apps/admin` is now a real Vite/React app with a screenshot-oriented settings rail, ring-metric dashboard cards, typed overview wiring, and responsive dashboard behavior.
+- Cross-app polish is applied in Shell/Sales/CRM/FMS/Admin:
+  - palette search registration in module apps
+  - click/focus top-search opens command palette (`Ctrl/Cmd+K`)
+  - shared toast notifications for placeholder/stub actions
 
 ## Tech Stack
 
@@ -83,11 +87,12 @@ pnpm build
 pnpm lint
 pnpm typecheck
 pnpm test
+pnpm ci:check
 ```
 
-These run through Turborepo. `@naiton/shell`, `@naiton/sales`, `@naiton/crm`, `@naiton/fms`, and `@naiton/api-mock` now run real build/typecheck flows; remaining frontend apps stay on placeholder scripts until their phases.
+These run through Turborepo. `@naiton/shell`, `@naiton/sales`, `@naiton/crm`, `@naiton/fms`, `@naiton/admin`, and `@naiton/api-mock` now run real build/typecheck flows.
 
-## Run Phase 7 Locally
+## Run Phase 8 Locally
 
 Start mock API:
 
@@ -117,6 +122,12 @@ Start FMS app:
 
 ```bash
 pnpm --filter @naiton/fms dev
+```
+
+Start Admin app:
+
+```bash
+pnpm --filter @naiton/admin dev
 ```
 
 Default login users from seed fixtures:
@@ -214,6 +225,33 @@ Default login users from seed fixtures:
 - Lightweight refresh simulation updates vehicle statuses, speeds, timestamps, and coordinates on an interval or manual refresh, without real-time infrastructure.
 - On bootstrap, FMS restores stored auth state when available; otherwise it performs a seeded dev login (`owner@naiton.com`) for local MVP flow.
 
+## Phase 8 Admin And Finish Pass Behavior
+
+- Admin app now renders the supplied dashboard direction with:
+  - green shared top nav
+  - left vertical settings rail
+  - ring metric cards + progress cards + responsive dashboard grid
+- Admin dashboard is wired to `GET /api/admin/overview` through the typed client and shared contracts.
+- Shared UI primitives are reused for dashboard cards (`MetricRingCard`, `SurfaceCard`) and platform providers.
+- Cross-app polish shipped:
+  - global command palette source registration in Sales/CRM/FMS/Admin
+  - top-search controls in module apps open palette on click/focus
+  - shared toast system for MVP placeholder actions
+  - direct-link versioned routes remain handled via `/:semver/*` guards and correction redirects
+- CI-ready checks are now codified with:
+  - root `pnpm ci:check`
+  - GitHub Actions workflow at `.github/workflows/ci.yml` running install + lint + typecheck + test + build
+
+## Contributor Handoff Rules
+
+- Keep fixed dev ports and semver route templates from `workspace.config.json`.
+- Use root commands (`dev`, `build`, `lint`, `typecheck`, `test`, `ci:check`) for cross-workspace validation.
+- When a phase is completed:
+  - mark checklist items in `plan.md`
+  - fill that phase's `Files changed` list with one-line notes
+  - update this `README.md` for status and runtime instructions
+  - do not pre-mark `Test Plan` checklist items before manual verification
+
 ## Mock API Surface
 
 - `POST /api/auth/login`
@@ -244,7 +282,7 @@ Defined in `.env.example`:
 
 ## Roadmap Snapshot
 
-1. Phase 8: Admin dashboard + polish + CI-ready checks.
+1. Execute the `Test Plan` checklist from `plan.md` for final acceptance.
 
 ---
 

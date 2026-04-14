@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { NavModule, NavModuleKey } from "@naiton/contracts";
+import type { SearchSource } from "@naiton/search-engine";
+import { useCommandPalette, useRegisterSearchSource } from "@naiton/ui-kit";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
 import {
@@ -52,6 +54,60 @@ const canAccessModule = (
   return sessionPermissions.includes("*") || sessionPermissions.includes(requiredPermission);
 };
 
+interface SearchSourceInput {
+  apiClient: ReturnType<typeof useCrmRuntime>["apiClient"];
+  modules: NavModule[];
+  sessionPermissions: string[];
+  frontendVersion: string;
+}
+
+const createSearchSource = ({
+  apiClient,
+  modules,
+  sessionPermissions,
+  frontendVersion
+}: SearchSourceInput): SearchSource => {
+  const moduleByKey = new Map(modules.map((module) => [module.key, module]));
+  const hasWildcard = sessionPermissions.includes("*");
+
+  return {
+    id: "crm-api-search",
+    label: "CRM",
+    priority: 95,
+    async getItems({ query, signal }) {
+      const response = await apiClient.search(query, signal);
+
+      return response.groups.flatMap((group) => {
+        return group.results.map((result) => {
+          const module = moduleByKey.get(result.module);
+          const requiredPermission = module ? permissionByModule[module.key] : undefined;
+          const permitted = module
+            ? module.enabled && (!requiredPermission || hasWildcard || sessionPermissions.includes(requiredPermission))
+            : false;
+
+          const href = module ? buildModuleHref(module, frontendVersion) : undefined;
+          const disabled = !module || !permitted || !href;
+
+          return {
+            id: result.id,
+            title: result.title,
+            subtitle: result.subtitle,
+            hint: result.module.toUpperCase(),
+            groupId: group.id,
+            groupLabel: group.label,
+            disabled,
+            onSelect: () => {
+              if (href) {
+                window.location.assign(href);
+              }
+            }
+          };
+        });
+      });
+    }
+  };
+};
+
 function BusyState({ label }: { label: string }) {
   return (
     <div className="crm-busy-state">
@@ -91,6 +147,7 @@ function RootRoute() {
 
 function VersionedCrmRoute() {
   const runtime = useCrmRuntime();
+  const commandPalette = useCommandPalette();
   const { semver } = useParams();
   const location = useLocation();
 
@@ -123,6 +180,17 @@ function VersionedCrmRoute() {
     queryFn: () => runtime.apiClient.getNotifications(),
     enabled: isAuthenticated
   });
+
+  const searchSource = useMemo(() => {
+    return createSearchSource({
+      apiClient: runtime.apiClient,
+      modules: navigationQuery.data ?? [],
+      sessionPermissions: session?.permissions ?? [],
+      frontendVersion: resolvedFrontendVersion ?? "1.0.0"
+    });
+  }, [navigationQuery.data, resolvedFrontendVersion, runtime.apiClient, session?.permissions]);
+
+  useRegisterSearchSource(searchSource, isAuthenticated);
 
   const modules = useMemo<CrmTopModuleItem[]>(() => {
     if (!resolvedFrontendVersion) {
@@ -178,6 +246,7 @@ function VersionedCrmRoute() {
       unreadNotifications={(notificationsQuery.data ?? []).filter((item) => !item.read).length}
       frontendVersion={resolvedFrontendVersion}
       backendVersion={runtime.apiClient.resolution.resolvedBackendVersion}
+      onOpenSearch={commandPalette.open}
     />
   );
 }

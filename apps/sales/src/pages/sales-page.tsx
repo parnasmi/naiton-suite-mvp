@@ -4,6 +4,7 @@ import type { AuthSession, SalesOrder } from "@naiton/contracts";
 import {
   DataGrid,
   SearchInput,
+  useToasts,
   type DataGridProps,
   type DataGridSortingChangeFn,
   type DataGridSortingState
@@ -30,6 +31,7 @@ interface SalesPageProps {
   unreadNotifications: number;
   frontendVersion: string;
   backendVersion: string;
+  onOpenSearch: () => void;
 }
 
 interface SalesOrderTableRow {
@@ -122,6 +124,7 @@ function OrdersSection({
   apiClient: ReturnType<typeof createSalesApiClient>;
   backendVersion: string;
 }) {
+  const { pushToast } = useToasts();
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
@@ -407,7 +410,15 @@ function OrdersSection({
               <option value={200}>200</option>
             </select>
           </label>
-          <button type="button" className="sales-primary-button">
+          <button
+            type="button"
+            className="sales-primary-button"
+            onClick={() =>
+              pushToast({
+                title: "Order creation flow is out of scope for this MVP."
+              })
+            }
+          >
             + New order
           </button>
         </div>
@@ -461,8 +472,11 @@ export function SalesPage({
   section,
   unreadNotifications,
   frontendVersion,
-  backendVersion
+  backendVersion,
+  onOpenSearch
 }: SalesPageProps) {
+  const { pushToast } = useToasts();
+
   return (
     <div className="sales-page">
       <header className="sales-topbar">
@@ -474,8 +488,8 @@ export function SalesPage({
           </span>
         </a>
 
-        <div className="sales-top-search">
-          <SearchInput readOnly value="" placeholder="Search Naiton" hotkeyHint="" />
+        <div className="sales-top-search" onClick={onOpenSearch} onFocus={onOpenSearch}>
+          <SearchInput readOnly value="" placeholder="Search Naiton" hotkeyHint="Ctrl/Cmd+K" />
         </div>
 
         <nav className="sales-top-modules">
@@ -498,16 +512,41 @@ export function SalesPage({
         </nav>
 
         <div className="sales-top-actions">
-          <button type="button" className="sales-icon-button" title="Workspace">
+          <button
+            type="button"
+            className="sales-icon-button"
+            title="Workspace"
+            onClick={() => pushToast({ title: "Workspace tools are planned for a later phase." })}
+          >
             []
           </button>
-          <button type="button" className="sales-icon-button" title="Share">
+          <button
+            type="button"
+            className="sales-icon-button"
+            title="Share"
+            onClick={() => pushToast({ title: "Share flow is not implemented in the MVP yet." })}
+          >
             S
           </button>
-          <button type="button" className="sales-icon-button" title="Help">
+          <button
+            type="button"
+            className="sales-icon-button"
+            title="Help"
+            onClick={() => pushToast({ title: "Help center integration is coming soon." })}
+          >
             ?
           </button>
-          <button type="button" className="sales-icon-button" title="Notifications">
+          <button
+            type="button"
+            className="sales-icon-button"
+            title="Notifications"
+            onClick={() =>
+              pushToast({
+                title: unreadNotifications > 0 ? `${unreadNotifications} unread notifications` : "No unread notifications",
+                tone: unreadNotifications > 0 ? "warning" : "success"
+              })
+            }
+          >
             !
             {unreadNotifications > 0 ? <span className="sales-count-dot">{unreadNotifications}</span> : null}
           </button>

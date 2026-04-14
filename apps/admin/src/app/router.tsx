@@ -5,17 +5,27 @@ import type { SearchSource } from "@naiton/search-engine";
 import { useCommandPalette, useRegisterSearchSource } from "@naiton/ui-kit";
 import { Navigate, Route, Routes, useLocation, useParams } from "react-router-dom";
 
-import {
-  SalesPage,
-  type SalesSection,
-  type SalesTopModuleItem
-} from "../pages/sales-page";
+import { AdminPage, type AdminSection, type AdminTopModuleItem } from "../pages/admin-page";
 import { buildModuleHref } from "../shared/lib/navigation";
-import { useSalesRuntime } from "./runtime-provider";
+import { useAdminRuntime } from "./runtime-provider";
 
-const salesPathForVersion = (frontendVersion: string): string => `/${frontendVersion}/`;
+const adminPathForVersion = (frontendVersion: string): string => `/${frontendVersion}/`;
 
-const sectionKeys = new Set<SalesSection>(["orders", "offers", "subscriptions"]);
+const sectionKeys = new Set<AdminSection>([
+  "accounting",
+  "logistics",
+  "crm",
+  "hrm",
+  "email",
+  "inventory",
+  "production",
+  "sales",
+  "security",
+  "scripts",
+  "system",
+  "tests",
+  "docs"
+]);
 
 const topModuleOrder: NavModuleKey[] = [
   "sales",
@@ -36,12 +46,9 @@ const permissionByModule: Partial<Record<NavModuleKey, string>> = {
   admin: "admin:read"
 };
 
-const isKnownSection = (value: string): value is SalesSection => sectionKeys.has(value as SalesSection);
+const isKnownSection = (value: string): value is AdminSection => sectionKeys.has(value as AdminSection);
 
-const canAccessModule = (
-  sessionPermissions: string[],
-  module: NavModule
-): boolean => {
+const canAccessModule = (sessionPermissions: string[], module: NavModule): boolean => {
   if (!module.enabled) {
     return false;
   }
@@ -55,24 +62,19 @@ const canAccessModule = (
 };
 
 interface SearchSourceInput {
-  apiClient: ReturnType<typeof useSalesRuntime>["apiClient"];
+  apiClient: ReturnType<typeof useAdminRuntime>["apiClient"];
   modules: NavModule[];
   sessionPermissions: string[];
   frontendVersion: string;
 }
 
-const createSearchSource = ({
-  apiClient,
-  modules,
-  sessionPermissions,
-  frontendVersion
-}: SearchSourceInput): SearchSource => {
+const createSearchSource = ({ apiClient, modules, sessionPermissions, frontendVersion }: SearchSourceInput): SearchSource => {
   const moduleByKey = new Map(modules.map((module) => [module.key, module]));
   const hasWildcard = sessionPermissions.includes("*");
 
   return {
-    id: "sales-api-search",
-    label: "Sales",
+    id: "admin-api-search",
+    label: "Admin",
     priority: 95,
     async getItems({ query, signal }) {
       const response = await apiClient.search(query, signal);
@@ -110,21 +112,21 @@ const createSearchSource = ({
 
 function BusyState({ label }: { label: string }) {
   return (
-    <div className="sales-busy-state">
-      <div className="sales-busy-spinner" />
+    <div className="admin-busy-state">
+      <div className="admin-busy-spinner" />
       <p>{label}</p>
     </div>
   );
 }
 
 function BootstrapErrorState() {
-  const runtime = useSalesRuntime();
+  const runtime = useAdminRuntime();
 
   return (
-    <div className="sales-busy-state">
-      <h1>Sales session failed to initialize</h1>
+    <div className="admin-busy-state">
+      <h1>Admin session failed to initialize</h1>
       <p>{runtime.bootstrapError ?? "Unexpected bootstrap error"}</p>
-      <button type="button" className="sales-retry-button" onClick={runtime.retryBootstrap}>
+      <button type="button" className="admin-retry-button" onClick={runtime.retryBootstrap}>
         Retry
       </button>
     </div>
@@ -132,21 +134,21 @@ function BootstrapErrorState() {
 }
 
 function RootRoute() {
-  const runtime = useSalesRuntime();
+  const runtime = useAdminRuntime();
 
   if (runtime.isBootstrapping || runtime.status === "loading") {
-    return <BusyState label="Initializing Sales..." />;
+    return <BusyState label="Initializing Admin..." />;
   }
 
   if (runtime.status === "authenticated" && runtime.resolvedFrontendVersion) {
-    return <Navigate to={salesPathForVersion(runtime.resolvedFrontendVersion)} replace />;
+    return <Navigate to={adminPathForVersion(runtime.resolvedFrontendVersion)} replace />;
   }
 
   return <BootstrapErrorState />;
 }
 
-function VersionedSalesRoute() {
-  const runtime = useSalesRuntime();
+function VersionedAdminRoute() {
+  const runtime = useAdminRuntime();
   const commandPalette = useCommandPalette();
   const { semver } = useParams();
   const location = useLocation();
@@ -164,19 +166,19 @@ function VersionedSalesRoute() {
     return stripped.startsWith("/") ? stripped : `/${stripped}`;
   }, [location.pathname]);
 
-  const section = useMemo<SalesSection | null>(() => {
-    const firstSegment = pathSuffix.split("/").filter(Boolean)[0] ?? "orders";
+  const section = useMemo<AdminSection | null>(() => {
+    const firstSegment = pathSuffix.split("/").filter(Boolean)[0] ?? "accounting";
     return isKnownSection(firstSegment) ? firstSegment : null;
   }, [pathSuffix]);
 
   const navigationQuery = useQuery({
-    queryKey: ["sales", "navigation", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
+    queryKey: ["admin", "navigation", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
     queryFn: () => runtime.apiClient.getNavigation(),
     enabled: isAuthenticated
   });
 
   const notificationsQuery = useQuery({
-    queryKey: ["sales", "notifications", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
+    queryKey: ["admin", "notifications", session?.user_id ?? "anonymous", runtime.apiClient.resolution.resolvedBackendVersion],
     queryFn: () => runtime.apiClient.getNotifications(),
     enabled: isAuthenticated
   });
@@ -192,7 +194,7 @@ function VersionedSalesRoute() {
 
   useRegisterSearchSource(searchSource, isAuthenticated);
 
-  const modules = useMemo<SalesTopModuleItem[]>(() => {
+  const modules = useMemo<AdminTopModuleItem[]>(() => {
     if (!resolvedFrontendVersion) {
       return [];
     }
@@ -200,7 +202,7 @@ function VersionedSalesRoute() {
     const availableModules = new Map((navigationQuery.data ?? []).map((module) => [module.key, module]));
 
     return topModuleOrder
-      .map((key): SalesTopModuleItem | null => {
+      .map((key): AdminTopModuleItem | null => {
         const module = availableModules.get(key);
         if (!module) {
           return null;
@@ -214,15 +216,15 @@ function VersionedSalesRoute() {
           label: module.label,
           href,
           disabled: !hasAccess || !href,
-          active: module.key === "sales",
+          active: false,
           comingSoon: module.coming_soon
         };
       })
-      .filter((item): item is SalesTopModuleItem => Boolean(item));
+      .filter((item): item is AdminTopModuleItem => Boolean(item));
   }, [navigationQuery.data, resolvedFrontendVersion, session?.permissions]);
 
   if (runtime.isBootstrapping || runtime.status === "loading") {
-    return <BusyState label="Loading Sales..." />;
+    return <BusyState label="Loading Admin..." />;
   }
 
   if (!isAuthenticated || !session || !resolvedFrontendVersion) {
@@ -234,11 +236,11 @@ function VersionedSalesRoute() {
   }
 
   if (!section) {
-    return <Navigate to={`/${resolvedFrontendVersion}/orders${location.search}`} replace />;
+    return <Navigate to={`/${resolvedFrontendVersion}/accounting${location.search}`} replace />;
   }
 
   return (
-    <SalesPage
+    <AdminPage
       session={session}
       apiClient={runtime.apiClient}
       modules={modules}
@@ -255,8 +257,8 @@ export function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<RootRoute />} />
-      <Route path="/:semver" element={<VersionedSalesRoute />} />
-      <Route path="/:semver/*" element={<VersionedSalesRoute />} />
+      <Route path="/:semver" element={<VersionedAdminRoute />} />
+      <Route path="/:semver/*" element={<VersionedAdminRoute />} />
       <Route path="*" element={<RootRoute />} />
     </Routes>
   );
